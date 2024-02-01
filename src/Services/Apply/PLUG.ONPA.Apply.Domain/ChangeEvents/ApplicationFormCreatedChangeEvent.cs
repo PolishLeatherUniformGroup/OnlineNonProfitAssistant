@@ -5,7 +5,7 @@ using PLUG.ONPA.Common.Models;
 
 namespace PLUG.ONPA.Apply.Domain.ChangeEvents;
 
-public class ApplicationFormCreated : ChangeEventBase
+public class ApplicationFormCreatedChangeEvent : ChangeEventBase
 {
     public string FirstName { get; private set; }
     public string LastName { get; private set; }
@@ -17,7 +17,7 @@ public class ApplicationFormCreated : ChangeEventBase
     public DateTime ApplicationDate { get; private set; }
     public List<ApplicationRecommendation> Recommendations { get; private set; }
 
-    public ApplicationFormCreated(string firstName, string lastName, Address address, DateOnly birthDate, string email, string phoneNumber, ApplicationStatus status, DateTime applicationDate, List<ApplicationRecommendation> recommendations)
+    public ApplicationFormCreatedChangeEvent(string firstName, string lastName, Address address, DateOnly birthDate, string email, string phoneNumber, ApplicationStatus status, DateTime applicationDate, List<ApplicationRecommendation> recommendations)
     {
         this.FirstName = firstName;
         this.LastName = lastName;
@@ -30,7 +30,7 @@ public class ApplicationFormCreated : ChangeEventBase
         this.Recommendations = recommendations;
     }
 
-    private ApplicationFormCreated(Guid aggregateId, long version, Guid? tenantId, string firstName, string lastName, Address address, DateOnly birthDate, string email, string phoneNumber, ApplicationStatus status, DateTime applicationDate, List<ApplicationRecommendation> recommendations) : base(aggregateId, version, tenantId)
+    private ApplicationFormCreatedChangeEvent(Guid aggregateId, long version, Guid? tenantId, string firstName, string lastName, Address address, DateOnly birthDate, string email, string phoneNumber, ApplicationStatus status, DateTime applicationDate, List<ApplicationRecommendation> recommendations) : base(aggregateId, version, tenantId)
     {
         this.FirstName = firstName;
         this.LastName = lastName;
@@ -46,6 +46,6 @@ public class ApplicationFormCreated : ChangeEventBase
 
     public override IChangeEvent WithAggregate(Guid aggregateId, long version, Type aggregateType, Guid? tenantId = null)
     {
-        return new ApplicationFormCreated(aggregateId, version, tenantId, this.FirstName, this.LastName, this.Address, this.BirthDate, this.Email, this.PhoneNumber, this.Status, this.ApplicationDate, this.Recommendations);
+        return new ApplicationFormCreatedChangeEvent(aggregateId, version, tenantId, this.FirstName, this.LastName, this.Address, this.BirthDate, this.Email, this.PhoneNumber, this.Status, this.ApplicationDate, this.Recommendations);
     }
 }

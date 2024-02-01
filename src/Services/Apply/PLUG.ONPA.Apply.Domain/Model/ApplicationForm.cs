@@ -23,7 +23,7 @@ public partial class ApplicationForm : AggregateRoot
     public DateTime? AppealDeadline { get; private set; }
     public DateTime? AppealDate { get; private set; }
     public DateTime? FinalDecisionDate { get; private set; }
-
+    public DateTime? CancellationDate { get; private set; }
     public string? RejectionReason { get; private set; }
     public string? AppealReason { get; private set; }
     
@@ -50,7 +50,7 @@ public partial class ApplicationForm : AggregateRoot
         var domainEvent = new ApplicationFormReceivedDomainEvent(firstName, lastName, address, birthDate, email, phoneNumber, recommendations, applicationDate);
         this.RaiseDomainEvent(domainEvent);
         
-        var changeEvent = new ApplicationFormCreated(firstName, lastName, address, birthDate, email, phoneNumber, ApplicationStatus.Received, applicationDate, recommendations);
+        var changeEvent = new ApplicationFormCreatedChangeEvent(firstName, lastName, address, birthDate, email, phoneNumber, ApplicationStatus.Received, applicationDate, recommendations);
         this.EmmitChangeEvent(changeEvent);
     }
 
@@ -65,6 +65,9 @@ public partial class ApplicationForm : AggregateRoot
         
         var domainEvent = new ApplicationAcceptedDomainEvent(requiredFee, this.Email);
         this.RaiseDomainEvent(domainEvent);
+        
+        var changeEvent = new ApplicationAcceptedChangeEvent(this.Status,this.RequiredMembershipFee);
+        this.EmmitChangeEvent(changeEvent);
     }
     
     public void DismissApplication(List<CardNumber> validRecommenders)
@@ -80,6 +83,9 @@ public partial class ApplicationForm : AggregateRoot
         
         var domainEvent = new ApplicationDismissedDomainEvent(this.Email);
         this.RaiseDomainEvent(domainEvent);
+        
+        var changeEvent = new ApplicationDismissedChangeEvent(this.Status,validRecommenders);
+        this.EmmitChangeEvent(changeEvent);
     }
 
     public void ApproveApplication(DateTime decisionDate)
@@ -105,6 +111,9 @@ public partial class ApplicationForm : AggregateRoot
         
         var domainEvent = new ApplicationApprovedDomainEvent(decisionDate, this.Email);
         this.RaiseDomainEvent(domainEvent);
+        
+        var changeEvent = new ApplicationApprovedChangeEvent(this.FirstDecisionDate.Value,this.Status);
+        this.EmmitChangeEvent(changeEvent);
     }
 
     public void RejectApplication(DateTime decisionDate, string reason, DateTime appealDeadline)
@@ -120,14 +129,21 @@ public partial class ApplicationForm : AggregateRoot
         
         var domainEvent = new ApplicationRejectedDomainEvent(decisionDate, this.Email, reason, appealDeadline);
         this.RaiseDomainEvent(domainEvent);
+        
+        var changeEvent = new ApplicationRejectedChangeEvent(this.Status,this.FirstDecisionDate.Value, this.RejectionReason,this.AppealDeadline.Value);
+        this.EmmitChangeEvent(changeEvent);
     }
 
     public void CancelApplication(DateTime dateTime)
     {
         this.Status = ApplicationStatus.Cancelled;
+        this.CancellationDate = dateTime;
         
         var domainEvent = new ApplicationCancelledDomainEvent(this.Email, dateTime);
         this.RaiseDomainEvent(domainEvent);
+        
+        var changeEvent = new ApplicationCancelledChangeEvent(this.CancellationDate.Value,this.Status);
+        this.EmmitChangeEvent(changeEvent);
     }
 
     public void RequestRecommendation(DateTime requestDate)
@@ -139,12 +155,23 @@ public partial class ApplicationForm : AggregateRoot
             this.RaiseDomainEvent(domainEvent);
         }
         this.Status = ApplicationStatus.InRecommendation;
+        
+        var changeEvent = new ApplicationRecommendationRequestedChangeEvent(requestDate,this.Status);
+        this.EmmitChangeEvent(changeEvent);
     }
 
     public void EndorseApplication(Guid recommendationId)
     {
-        var recommendation = this.recommendations.Single(r => r.Id == recommendationId);
+        var recommendation = this.recommendations.SingleOrDefault(r => r.Id == recommendationId);
+        if(recommendation == null)
+        {
+            throw new InvalidOperationException("Cannot endorse application with recommendation that does not exist");
+        }
         recommendation.EndorseRecommendation();
+        
+        var changeEvent = new ApplicationEndorsedChangeEvent(recommendationId);
+        this.EmmitChangeEvent(changeEvent);
+        
         if (this.recommendations.All(x => x.IsEndorsed))
         {
             this.Status = ApplicationStatus.AwaitsDecision;
@@ -163,6 +190,9 @@ public partial class ApplicationForm : AggregateRoot
             var domainEvent = new ApplicationOpposedDomainEvent(this.Email);
             this.RaiseDomainEvent(domainEvent);
         }
+        
+        var changeEvent = new ApplicationOpposedChangeEvent(Status,recommendationId);
+        this.EmmitChangeEvent(changeEvent);
     }
 
     public void AppealRejection(DateTime appealDate, string appealReason)
@@ -179,6 +209,8 @@ public partial class ApplicationForm : AggregateRoot
             
             var domainEvent = new ApplicationRejectionAppealDismissedDomainEvent(this.Email, this.AppealDeadline.Value, appealDate);
             this.RaiseDomainEvent(domainEvent);
+            
+            var changeEvent = new ApplicationRejectionAppealDismissedChangeEvent(appealDate,this.Status);
         }
         else
         {
@@ -188,6 +220,9 @@ public partial class ApplicationForm : AggregateRoot
             
             var domainEvent = new ApplicationRejectionAppealReceivedDomainEvent(this.Email, appealDate, appealReason);
             this.RaiseDomainEvent(domainEvent);
+            
+            var changeEvent = new ApplicationRejectionAppealReceivedChangeEvent(appealDate,this.AppealReason,this.Status);
+            this.EmmitChangeEvent(changeEvent);
         }
     }
 
@@ -204,6 +239,9 @@ public partial class ApplicationForm : AggregateRoot
         
         var domainEvent = new ApplicationRejectionAppealApprovedDomainEvent(this.Email, decisionDate, reason);
         this.RaiseDomainEvent(domainEvent);
+        
+        var changeEvent = new ApplicationRejectionAppealApprovedChangeEvent(decisionDate,this.FinalDecisionReason,this.Status);
+        this.EmmitChangeEvent(changeEvent);
     }
 
     public void RejectAppeal(DateTime decisionDate, string reason)
@@ -218,6 +256,9 @@ public partial class ApplicationForm : AggregateRoot
         
         var domainEvent = new ApplicationRejectionAppealRejectedDomainEvent(this.Email, decisionDate, reason);
         this.RaiseDomainEvent(domainEvent);
+        
+        var changeEvent = new ApplicationRejectionAppealRejectedChangeEvent(decisionDate,this.FinalDecisionReason,this.Status);
+        this.EmmitChangeEvent(changeEvent);
     }
 
     public void RegisterMembershipFeePayment(Money paidFee, DateTime paymentDate)
@@ -231,5 +272,8 @@ public partial class ApplicationForm : AggregateRoot
         
         var domainEvent = new ApplicationMembershipFeePaidDomainEvent(this.Email, paymentDate, paidFee);
         this.RaiseDomainEvent(domainEvent);
+        
+        var changeEvent = new ApplicationMembershipFeePaymentReceivedChangeEvent(paymentDate,paidFee);
+        this.EmmitChangeEvent(changeEvent);
     }
 }

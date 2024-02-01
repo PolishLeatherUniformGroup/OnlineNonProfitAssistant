@@ -73,16 +73,32 @@ public class Money : ValueObject
         return new Money(money.Amount / divisor, money.Currency);
     }
     
-    public static bool operator ==(Money? money1, Money? money2)
+    public static Money operator -(Money money)
     {
-        if(money1 is null && money2 is null)
+        return new Money(-money.Amount, money.Currency);
+    }
+    
+    public static bool operator ==(Money money1, Money money2)
+    {
+        if (money1 is null && money2 is null)
         {
             return true;
         }
-        return money1!.Currency == money2!.Currency && money1.Amount == money2.Amount;
+
+        if (money1 is null || money2 is null)
+        {
+            return false;
+        }
+
+        if (money1.Currency != money2.Currency)
+        {
+            throw new InvalidOperationException("Cannot compare money of different currencies");
+        }
+
+        return money1.Amount == money2.Amount;
     }
     
-    public static bool operator !=(Money? money1, Money? money2)
+    public static bool operator !=(Money money1, Money money2)
     {
         return !(money1 == money2);
     }

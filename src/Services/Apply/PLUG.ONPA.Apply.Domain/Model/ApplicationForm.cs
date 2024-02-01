@@ -182,7 +182,11 @@ public partial class ApplicationForm : AggregateRoot
 
     public void OpposeApplication(Guid recommendationId)
     {
-        var recommendation = this.recommendations.Single(r => r.Id == recommendationId);
+        var recommendation = this.recommendations.SingleOrDefault(r => r.Id == recommendationId);
+        if(recommendation == null)
+        {
+            throw new InvalidOperationException("Cannot oppose application with recommendation that does not exist");
+        }
         recommendation.OpposeRecommendation();
         if (this.recommendations.Any(x => x.IsRefused))
         {
@@ -263,7 +267,7 @@ public partial class ApplicationForm : AggregateRoot
 
     public void RegisterMembershipFeePayment(Money paidFee, DateTime paymentDate)
     {
-        if(this.Status != ApplicationStatus.Valid)
+        if(this.Status != ApplicationStatus.Valid && this.Status != ApplicationStatus.AwaitsDecision && this.Status != ApplicationStatus.InRecommendation)
         {
             throw new InvalidOperationException("Cannot register membership fee payment for application that is not valid");
         }

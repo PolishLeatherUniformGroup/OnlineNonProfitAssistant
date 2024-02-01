@@ -9,7 +9,12 @@ public class ApplicationRecommendation :Entity
     public bool IsValid { get; private set; }
     public DateTime? RequestedAt { get; private set; }
     private bool? isEndorsed;
-    
+
+    public ApplicationRecommendation(Guid id, CardNumber recommender) : base(id)
+    {
+        Recommender = recommender;
+    }
+
     public bool IsEndorsed => this.isEndorsed.GetValueOrDefault(false);
     public bool IsRefused => this.isEndorsed.HasValue && !this.IsEndorsed;
     

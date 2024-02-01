@@ -1,0 +1,6 @@
+@PLUG.ONPA.Apply.Api_HostAddress = http://localhost:5143
+
+GET {{PLUG.ONPA.Apply.Api_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

@@ -12,4 +12,8 @@
     <PackageReference Include="Aspire.Hosting" Version="8.0.0-preview.2.23619.3" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\Services\Apply\PLUG.ONPA.Apply.Api\PLUG.ONPA.Apply.Api.csproj" />
+  </ItemGroup>
+
 </Project>

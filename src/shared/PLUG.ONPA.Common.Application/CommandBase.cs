@@ -4,4 +4,4 @@ using PLUG.ONPA.Common.Application.Abstractions;
 
 namespace PLUG.ONPA.Common.Application;
 
-public abstract record CommandBase(Guid? TenantId) : ICommand, IRequest<Result<bool>>;
+public abstract record CommandBase(Guid? TenantId) : ICommand;

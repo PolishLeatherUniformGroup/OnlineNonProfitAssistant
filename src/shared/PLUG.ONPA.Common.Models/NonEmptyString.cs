@@ -15,7 +15,12 @@ public class NonEmptyString :ValueObject
         
         this.Value = value;
     }
-    
+
+    public override string ToString()
+    {
+        return Value;
+    }
+
     public static implicit operator string(NonEmptyString nonEmptyString)
     {
         return nonEmptyString.Value;

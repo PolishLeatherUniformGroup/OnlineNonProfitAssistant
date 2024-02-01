@@ -17,6 +17,13 @@ public class CardNumber : ValueObject
     {
         return $"{cardNumber.Prefix}{cardNumber.Number:D4}";
     }
+    
+    public static explicit operator CardNumber(string cardNumber)
+    {
+        var number = int.Parse(cardNumber.Substring(cardNumber.Length - 4,cardNumber.Length));
+        var prefix = cardNumber.Substring(0, cardNumber.Length - 4);
+        return new CardNumber(prefix, number);
+    }
 
     protected override IEnumerable<object> GetEqualityComponents()
     {

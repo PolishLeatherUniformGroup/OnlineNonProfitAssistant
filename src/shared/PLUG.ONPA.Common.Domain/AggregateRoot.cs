@@ -19,6 +19,12 @@ public abstract class AggregateRoot : IAggregateRoot
     protected readonly ICollection<IDomainEvent> domainEvents = new LinkedList<IDomainEvent>();
     protected readonly ICollection<IChangeEvent> changeEvents = new LinkedList<IChangeEvent>();
 
+    protected AggregateRoot(Guid? tenantId = null)
+    {
+        this.AggregateId = Guid.NewGuid();
+        this.TenantId = tenantId ?? Guid.Empty;
+    }
+
     protected AggregateRoot(Guid aggregateId, IEnumerable<IChangeEvent> events, Guid? tenantId)
     {
         this.AggregateId = aggregateId;

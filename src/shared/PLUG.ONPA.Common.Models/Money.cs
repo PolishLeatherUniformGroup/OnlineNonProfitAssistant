@@ -9,6 +9,7 @@ public class Money : ValueObject
     public const string Usd = "USD";
     public decimal Amount { get; private set; }
     public NonEmptyString Currency { get;  private set; }
+    public bool IsZero => this.Amount == 0;
 
     public Money(decimal amount, string currency)
     {
@@ -70,6 +71,60 @@ public class Money : ValueObject
     public static Money operator /(Money money, decimal divisor)
     {
         return new Money(money.Amount / divisor, money.Currency);
+    }
+    
+    public static bool operator ==(Money? money1, Money? money2)
+    {
+        if(money1 is null && money2 is null)
+        {
+            return true;
+        }
+        return money1!.Currency == money2!.Currency && money1.Amount == money2.Amount;
+    }
+    
+    public static bool operator !=(Money? money1, Money? money2)
+    {
+        return !(money1 == money2);
+    }
+    
+    public static bool operator >(Money money1, Money money2)
+    {
+        if (money1.Currency != money2.Currency)
+        {
+            throw new InvalidOperationException("Cannot compare money of different currencies");
+        }
+
+        return money1.Amount > money2.Amount;
+    }
+    
+    public static bool operator <(Money money1, Money money2)
+    {
+        if (money1.Currency != money2.Currency)
+        {
+            throw new InvalidOperationException("Cannot compare money of different currencies");
+        }
+
+        return money1.Amount < money2.Amount;
+    }
+    
+    public static bool operator >=(Money money1, Money money2)
+    {
+        if (money1.Currency != money2.Currency)
+        {
+            throw new InvalidOperationException("Cannot compare money of different currencies");
+        }
+
+        return money1.Amount >= money2.Amount;
+    }
+    
+    public static bool operator <=(Money money1, Money money2)
+    {
+        if (money1.Currency != money2.Currency)
+        {
+            throw new InvalidOperationException("Cannot compare money of different currencies");
+        }
+
+        return money1.Amount <= money2.Amount;
     }
 
     protected override IEnumerable<object> GetEqualityComponents()

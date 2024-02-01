@@ -6,4 +6,9 @@
         <Nullable>enable</Nullable>
     </PropertyGroup>
 
+    <ItemGroup>
+      <ProjectReference Include="..\..\..\shared\PLUG.ONPA.Common.Domain\PLUG.ONPA.Common.Domain.csproj" />
+      <ProjectReference Include="..\..\..\shared\PLUG.ONPA.Common.Models\PLUG.ONPA.Common.Models.csproj" />
+    </ItemGroup>
+
 </Project>

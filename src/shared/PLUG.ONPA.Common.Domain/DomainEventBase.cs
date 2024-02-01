@@ -33,7 +33,7 @@ public abstract class DomainEventBase : IDomainEvent, IEquatable<DomainEventBase
         if (ReferenceEquals(null, obj)) return false;
         if (ReferenceEquals(this, obj)) return true;
         if (obj.GetType() != this.GetType()) return false;
-        return Equals((DomainEventBase)obj);
+        return this.Equals((DomainEventBase)obj);
     }
 
     public override int GetHashCode()

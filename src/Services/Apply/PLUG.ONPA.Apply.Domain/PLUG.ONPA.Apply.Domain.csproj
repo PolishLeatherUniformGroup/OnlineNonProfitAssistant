@@ -11,8 +11,4 @@
       <ProjectReference Include="..\..\..\shared\PLUG.ONPA.Common.Models\PLUG.ONPA.Common.Models.csproj" />
     </ItemGroup>
 
-    <ItemGroup>
-      <Folder Include="ChangeEvents\" />
-    </ItemGroup>
-
 </Project>

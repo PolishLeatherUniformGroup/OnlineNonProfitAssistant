@@ -1,3 +1,4 @@
+using PLUG.ONPA.Apply.Domain.ChangeEvents;
 using PLUG.ONPA.Apply.Domain.DomainEvents;
 using PLUG.ONPA.Common.Domain;
 using PLUG.ONPA.Common.Models;
@@ -48,6 +49,9 @@ public partial class ApplicationForm : AggregateRoot
         
         var domainEvent = new ApplicationFormReceivedDomainEvent(firstName, lastName, address, birthDate, email, phoneNumber, recommendations, applicationDate);
         this.RaiseDomainEvent(domainEvent);
+        
+        var changeEvent = new ApplicationFormCreated(firstName, lastName, address, birthDate, email, phoneNumber, ApplicationStatus.Received, applicationDate, recommendations);
+        this.EmmitChangeEvent(changeEvent);
     }
 
     public void AcceptApplication(Money requiredFee)

@@ -6,7 +6,7 @@ namespace PLUG.ONPA.Apply.Domain.Model;
 public class ApplicationRecommendation :Entity
 {
     public CardNumber Recommender { get; private set; }
-    public bool? IsValid { get; private set; }
+    public bool IsValid { get; private set; }
     public DateTime? RequestedAt { get; private set; }
     private bool? isEndorsed;
     
@@ -20,7 +20,7 @@ public class ApplicationRecommendation :Entity
     
     public void RequestRecommendation(DateTime requestedAt)
     {
-        if (this.IsValid.GetValueOrDefault())
+        if (this.IsValid)
         {
             this.RequestedAt = requestedAt;
         }
@@ -32,7 +32,7 @@ public class ApplicationRecommendation :Entity
 
     public void EndorseRecommendation()
     {
-        if(this.IsValid.GetValueOrDefault() && this.RequestedAt.HasValue)
+        if(this.IsValid && this.RequestedAt.HasValue)
         {
             this.isEndorsed = true;
         }
@@ -44,7 +44,7 @@ public class ApplicationRecommendation :Entity
     
     public void OpposeRecommendation()
     {
-        if(this.IsValid.GetValueOrDefault() && this.RequestedAt.HasValue)
+        if(this.IsValid && this.RequestedAt.HasValue)
         {
             this.isEndorsed = false;
         }

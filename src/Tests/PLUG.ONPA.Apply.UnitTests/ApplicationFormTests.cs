@@ -147,14 +147,15 @@ public class ApplicationFormTests
         sut.Recommendations.Should().HaveCount(1);
         sut.Recommendations.All(x=>x.IsEndorsed).Should().BeTrue();
         sut.Status.Should().Be(ApplicationStatus.AwaitsDecision);
-        sut.GetChangeEvents().Should().HaveCount(3);
+        sut.GetChangeEvents().Should().HaveCount(4);
         sut.GetChangeEvents().Should().ContainItemsAssignableTo<ApplicationEndorsedChangeEvent>();
+        sut.GetChangeEvents().Should().ContainItemsAssignableTo<ApplicationRecommendedChangeEvent>();
         sut.GetDomainEvents().Should().HaveCount(3);
         sut.GetDomainEvents().Should().ContainItemsAssignableTo<ApplicationEndorsedDomainEvent>();
     }
     
     [Fact]
-    public void EndorseApplication_should_throwException_when_recommendtionNotFound()
+    public void EndorseApplication_should_throwException_when_recommendationNotFound()
     {
         // Arrange
         var sut = CreateValidApplicationForm();
@@ -251,7 +252,7 @@ public class ApplicationFormTests
         sut.Recommendations.Should().HaveCount(1);
         sut.Recommendations.All(x=>x.IsEndorsed).Should().BeTrue();
         sut.Status.Should().Be(ApplicationStatus.Approved);
-        sut.GetChangeEvents().Should().HaveCount(5);
+        sut.GetChangeEvents().Should().HaveCount(6);
         sut.GetChangeEvents().Should().ContainItemsAssignableTo<ApplicationApprovedChangeEvent>();
         sut.GetDomainEvents().Should().HaveCount(5);
         sut.GetDomainEvents().Should().ContainItemsAssignableTo<ApplicationApprovedDomainEvent>();
@@ -280,10 +281,162 @@ public class ApplicationFormTests
         sut.AppealDeadline.Should().Be(deadline);
         sut.FirstDecisionDate.Should().Be(rejectionDate);
         sut.Status.Should().Be(ApplicationStatus.Rejected);
-        sut.GetChangeEvents().Should().HaveCount(5);
+        sut.GetChangeEvents().Should().HaveCount(6);
         sut.GetChangeEvents().Should().ContainItemsAssignableTo<ApplicationRejectedChangeEvent>();
         sut.GetDomainEvents().Should().HaveCount(5);
         sut.GetDomainEvents().Should().ContainItemsAssignableTo<ApplicationRejectedDomainEvent>();
+    }
+    
+    [Fact]
+    public void AppealApplicationRejection_should_emmit_ApplicationRejectionAppealDismissedChangeEvent_whenAppealedOverDeadline()
+    {
+        // Arrange
+        var sut = CreateValidApplicationForm();
+        var requiredFee = this.fixture.Create<decimal>();
+        sut.AcceptApplication(Money.FromPln(requiredFee));
+        sut.RequestRecommendation(this.fixture.Create<DateTime>());
+        sut.EndorseApplication(sut.Recommendations.First().Id);
+        var rejectionDate = this.fixture.Create<DateTime>();
+        sut.RegisterMembershipFeePayment(sut.RequiredMembershipFee,rejectionDate);
+        var reason = this.fixture.Create<string>();
+        var deadline = this.fixture.Create<DateTime>();
+        sut.RejectApplication(rejectionDate,reason,deadline);
+        
+        // Act
+        sut.AppealRejection(deadline.AddDays(2),this.fixture.Create<string>());
+        
+        // Assert
+        sut.Recommendations.Should().HaveCount(1);
+        sut.Recommendations.All(x=>x.IsEndorsed).Should().BeTrue();
+        sut.RejectionReason.Should().Be(reason);
+        sut.AppealDeadline.Should().Be(deadline);
+        sut.FinalDecisionDate.Should().Be(deadline);
+        sut.Status.Should().Be(ApplicationStatus.AppealDismissed);
+        sut.GetChangeEvents().Should().HaveCount(7);
+        sut.GetChangeEvents().Should().ContainItemsAssignableTo<ApplicationRejectionAppealDismissedChangeEvent>();
+        sut.GetDomainEvents().Should().HaveCount(6);
+        sut.GetDomainEvents().Should().ContainItemsAssignableTo<ApplicationRejectionAppealDismissedDomainEvent>();
+    }
+    
+    [Fact]
+    public void AppealApplicationRejection_should_emmit_ApplicationRejectionAppealReceivedChangeEvent_whenAppealedBeforeDeadline()
+    {
+        // Arrange
+        var sut = CreateValidApplicationForm();
+        var requiredFee = this.fixture.Create<decimal>();
+        sut.AcceptApplication(Money.FromPln(requiredFee));
+        sut.RequestRecommendation(this.fixture.Create<DateTime>());
+        sut.EndorseApplication(sut.Recommendations.First().Id);
+        var rejectionDate = this.fixture.Create<DateTime>();
+        sut.RegisterMembershipFeePayment(sut.RequiredMembershipFee,rejectionDate);
+        var reason = this.fixture.Create<string>();
+        var deadline = this.fixture.Create<DateTime>();
+        sut.RejectApplication(rejectionDate,reason,deadline);
+        
+        // Act
+        sut.AppealRejection(deadline.AddDays(-2),reason);
+        
+        // Assert
+        sut.Recommendations.Should().HaveCount(1);
+        sut.Recommendations.All(x=>x.IsEndorsed).Should().BeTrue();
+        sut.RejectionReason.Should().Be(reason);
+        sut.AppealDeadline.Should().Be(deadline);
+        sut.AppealDate.Should().Be(deadline.AddDays(-2));
+        sut.AppealReason.Should().Be(reason);
+        sut.Status.Should().Be(ApplicationStatus.RejectionAppealed);
+        sut.GetChangeEvents().Should().HaveCount(7);
+        sut.GetChangeEvents().Should().ContainItemsAssignableTo<ApplicationRejectionAppealReceivedChangeEvent>();
+        sut.GetDomainEvents().Should().HaveCount(6);
+        sut.GetDomainEvents().Should().ContainItemsAssignableTo<ApplicationRejectionAppealReceivedDomainEvent>();
+    }
+    
+    [Fact]
+    public void ApproveAppeal_should_emmit_ApplicationRejectionAppealApprovedChangeEvent()
+    {
+        // Arrange
+        var sut = CreateValidApplicationForm();
+        var requiredFee = this.fixture.Create<decimal>();
+        sut.AcceptApplication(Money.FromPln(requiredFee));
+        sut.RequestRecommendation(this.fixture.Create<DateTime>());
+        sut.EndorseApplication(sut.Recommendations.First().Id);
+        var rejectionDate = this.fixture.Create<DateTime>();
+        sut.RegisterMembershipFeePayment(sut.RequiredMembershipFee,rejectionDate);
+        var reason = this.fixture.Create<string>();
+        var deadline = this.fixture.Create<DateTime>();
+        sut.RejectApplication(rejectionDate,reason,deadline);
+        sut.AppealRejection(deadline.AddDays(-2),reason);
+        var decisionDate = this.fixture.Create<DateTime>();
+        // Act
+        sut.ApproveAppeal(decisionDate,reason);
+        
+        // Assert
+        sut.Recommendations.Should().HaveCount(1);
+        sut.Recommendations.All(x=>x.IsEndorsed).Should().BeTrue();
+        sut.RejectionReason.Should().Be(reason);
+        sut.AppealDeadline.Should().Be(deadline);
+        sut.AppealDate.Should().Be(deadline.AddDays(-2));
+        sut.AppealReason.Should().Be(reason);
+        sut.FinalDecisionDate.Should().Be(decisionDate);
+        sut.Status.Should().Be(ApplicationStatus.AppealApproved);
+        sut.GetChangeEvents().Should().HaveCount(8);
+        sut.GetChangeEvents().Should().ContainItemsAssignableTo<ApplicationRejectionAppealApprovedChangeEvent>();
+        sut.GetDomainEvents().Should().HaveCount(7);
+        sut.GetDomainEvents().Should().ContainItemsAssignableTo<ApplicationRejectionAppealApprovedDomainEvent>();
+    }
+    
+    [Fact]
+    public void RejectAppeal_should_emmit_ApplicationRejectionAppealRejectedChangeEvent()
+    {
+        // Arrange
+        var sut = CreateValidApplicationForm();
+        var requiredFee = this.fixture.Create<decimal>();
+        sut.AcceptApplication(Money.FromPln(requiredFee));
+        sut.RequestRecommendation(this.fixture.Create<DateTime>());
+        sut.EndorseApplication(sut.Recommendations.First().Id);
+        var rejectionDate = this.fixture.Create<DateTime>();
+        sut.RegisterMembershipFeePayment(sut.RequiredMembershipFee,rejectionDate);
+        var reason = this.fixture.Create<string>();
+        var deadline = this.fixture.Create<DateTime>();
+        sut.RejectApplication(rejectionDate,reason,deadline);
+        sut.AppealRejection(deadline.AddDays(-2),reason);
+        var decisionDate = this.fixture.Create<DateTime>();
+        // Act
+        sut.RejectAppeal(decisionDate,reason);
+        
+        // Assert
+        sut.Recommendations.Should().HaveCount(1);
+        sut.Recommendations.All(x=>x.IsEndorsed).Should().BeTrue();
+        sut.RejectionReason.Should().Be(reason);
+        sut.AppealDeadline.Should().Be(deadline);
+        sut.AppealDate.Should().Be(deadline.AddDays(-2));
+        sut.AppealReason.Should().Be(reason);
+        sut.FinalDecisionDate.Should().Be(decisionDate);
+        sut.FinalDecisionReason.Should().Be(reason);
+        sut.Status.Should().Be(ApplicationStatus.AppealRejected);
+        sut.GetChangeEvents().Should().HaveCount(8);
+        sut.GetChangeEvents().Should().ContainItemsAssignableTo<ApplicationRejectionAppealRejectedChangeEvent>();
+        sut.GetDomainEvents().Should().HaveCount(7);
+        sut.GetDomainEvents().Should().ContainItemsAssignableTo<ApplicationRejectionAppealRejectedDomainEvent>();
+    }
+    
+    [Fact]
+    public void CancelApplication_should_emmit_ApplicationCancelledChangeEvent()
+    {
+        // Arrange
+        var sut = CreateValidApplicationForm();
+        var cancellationDate = this.fixture.Create<DateTime>();
+        
+        // Act
+        sut.CancelApplication(cancellationDate);
+        
+        // Assert
+        sut.Status.Should().Be(ApplicationStatus.Cancelled);
+        sut.Recommendations.Should().HaveCount(1);
+        sut.Recommendations.All(x=>!x.IsValid).Should().BeTrue();
+        sut.GetChangeEvents().Should().HaveCount(1);
+        sut.GetChangeEvents().Should().ContainItemsAssignableTo<ApplicationCancelledChangeEvent>();
+        sut.GetDomainEvents().Should().HaveCount(1);
+        sut.GetDomainEvents().Should().ContainItemsAssignableTo<ApplicationCancelledDomainEvent>();
     }
     
     private ApplicationForm CreateValidApplicationForm()

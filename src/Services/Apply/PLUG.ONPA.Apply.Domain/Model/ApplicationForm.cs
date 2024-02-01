@@ -177,6 +177,9 @@ public partial class ApplicationForm : AggregateRoot
             this.Status = ApplicationStatus.AwaitsDecision;
             var domainEvent = new ApplicationEndorsedDomainEvent(this.Email);
             this.RaiseDomainEvent(domainEvent);
+            
+            var changeEvent2 = new ApplicationRecommendedChangeEvent(this.Status);
+            this.EmmitChangeEvent(changeEvent2);
         }
     }
 
@@ -215,6 +218,7 @@ public partial class ApplicationForm : AggregateRoot
             this.RaiseDomainEvent(domainEvent);
             
             var changeEvent = new ApplicationRejectionAppealDismissedChangeEvent(appealDate,this.Status);
+            this.EmmitChangeEvent(changeEvent);
         }
         else
         {

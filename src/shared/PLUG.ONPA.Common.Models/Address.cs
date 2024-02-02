@@ -12,7 +12,7 @@ public class Address : ValueObject
     
     public string? AddressLine2 { get; private set; }
 
-    public Address(string country, string city, string postalCode, string street, string? state = null, string addressLine2 = null)
+    public Address(string country, string city, string postalCode, string street, string? state = null, string? addressLine2 = null)
     {
         this.Country = country;
         this.State = state;

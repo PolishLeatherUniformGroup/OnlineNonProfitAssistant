@@ -10,9 +10,9 @@ namespace PLUG.ONPA.Apply.Api.CommandHandlers;
 
 public sealed class DismissApplicationCommandHandler : CommandHandlerBase<DismissApplicationCommand>
 {
-    private readonly IAggregateRepository<Application> aggregateRepository;
+    private readonly IAggregateRepository<Domain.Model.Domain> aggregateRepository;
 
-    public DismissApplicationCommandHandler(IAggregateRepository<Application> aggregateRepository)
+    public DismissApplicationCommandHandler(IAggregateRepository<Domain.Model.Domain> aggregateRepository)
     {
         this.aggregateRepository = aggregateRepository;
     }

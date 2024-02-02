@@ -9,9 +9,9 @@ namespace PLUG.ONPA.Apply.Api.CommandHandlers;
 
 public sealed class ApproveApplicationCommandHandler : CommandHandlerBase<ApproveApplicationCommand>
 {
-    private readonly IAggregateRepository<Application> aggregateRepository;
+    private readonly IAggregateRepository<Domain.Model.Domain> aggregateRepository;
 
-    public ApproveApplicationCommandHandler(IAggregateRepository<Application> aggregateRepository)
+    public ApproveApplicationCommandHandler(IAggregateRepository<Domain.Model.Domain> aggregateRepository)
     {
         this.aggregateRepository = aggregateRepository;
     }

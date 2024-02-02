@@ -10,9 +10,9 @@ namespace PLUG.ONPA.Apply.Api.CommandHandlers;
 
 public sealed class RegisterApplicationFeePaymentCommandHandler: CommandHandlerBase<RegisterApplicationFeePaymentCommand>
 {
-    private readonly IAggregateRepository<Application> aggregateRepository;
+    private readonly IAggregateRepository<Domain.Model.Domain> aggregateRepository;
 
-    public RegisterApplicationFeePaymentCommandHandler(IAggregateRepository<Application> aggregateRepository)
+    public RegisterApplicationFeePaymentCommandHandler(IAggregateRepository<Domain.Model.Domain> aggregateRepository)
     {
         this.aggregateRepository = aggregateRepository;
     }

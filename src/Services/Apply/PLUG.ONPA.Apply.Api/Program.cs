@@ -13,7 +13,7 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddControllers();
 builder.Services.AddProblemDetails();
 
-builder.Services.AddTransient<IAggregateRepository<Application>, ApplicationAggregateRepository>();
+builder.Services.AddTransient<IAggregateRepository<Domain>, ApplicationAggregateRepository>();
 builder.Services.AddTransient<ITenantSettingsService, TenantSettingsService>();
 builder.Services.AddMediatR(configuration =>
 {

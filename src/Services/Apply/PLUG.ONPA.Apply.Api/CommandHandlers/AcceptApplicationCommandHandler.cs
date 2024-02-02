@@ -10,9 +10,9 @@ namespace PLUG.ONPA.Apply.Api.CommandHandlers;
 
 public sealed class AcceptApplicationCommandHandler : CommandHandlerBase<AcceptApplicationCommand>
 {
-    private readonly IAggregateRepository<Application> aggregateRepository;
+    private readonly IAggregateRepository<Domain.Model.Domain> aggregateRepository;
 
-    public AcceptApplicationCommandHandler(IAggregateRepository<Application> aggregateRepository)
+    public AcceptApplicationCommandHandler(IAggregateRepository<Domain.Model.Domain> aggregateRepository)
     {
         this.aggregateRepository = aggregateRepository;
     }
@@ -30,7 +30,7 @@ public sealed class AcceptApplicationCommandHandler : CommandHandlerBase<AcceptA
 
             aggregate.AcceptApplication(new Money(request.RequiredFeeAmount, request.RequiredFeeCurrency));
 
-            await this.aggregateRepository.UpdateAsync(aggregate, cancellationToken);
+            await this.aggregateRepository.SaveAsync(aggregate, cancellationToken);
             return aggregate.AggregateId;
         }
         catch (Exception e)

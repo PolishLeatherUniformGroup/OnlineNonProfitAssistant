@@ -8,11 +8,11 @@ using PLUG.ONPA.Common.Models;
 
 namespace PLUG.ONPA.Apply.UnitTests;
 
-public class ApplicationTests
+public class DomainTests
 {
     private readonly IFixture fixture;
 
-    public ApplicationTests()
+    public DomainTests()
     {
         this.fixture = new Fixture();
     }
@@ -37,7 +37,7 @@ public class ApplicationTests
             new CardNumber(this.fixture.Create<string>(), this.fixture.Create<int>()));
         
         // Act
-        var sut = new Application(firstName,
+        var sut = new Domain.Model.Domain(firstName,
             lastName,
             address,
             birthDate,
@@ -440,7 +440,7 @@ public class ApplicationTests
         sut.GetDomainEvents().Should().ContainItemsAssignableTo<ApplicationCancelledDomainEvent>();
     }
     
-    private Application CreateValidApplicationForm()
+    private Domain.Model.Domain CreateValidApplicationForm()
     {
         var firstName = this.fixture.Create<string>();
         var lastName = this.fixture.Create<string>();
@@ -457,7 +457,7 @@ public class ApplicationTests
         var recommendation = new ApplicationRecommendation(Guid.NewGuid(),
             new CardNumber(this.fixture.Create<string>(), this.fixture.Create<int>()));
         
-        var applicationForm=  new Application(firstName,
+        var applicationForm=  new Domain.Model.Domain(firstName,
             lastName,
             address,
             birthDate,

@@ -71,12 +71,7 @@ public sealed class MapRequestsToCommands : Profile
                 opt.MapFrom(src => src.Reason))
             .ForCtorParam(nameof(AppealApplicationRejectionCommand.AppealDate), opt =>
                 opt.MapFrom(src => src.AppealDate));
-
-        this.CreateMap<ApplicationRejectionAppealAcceptRequest, AcceptApplicationRejectionAppealCommand>()
-            .ForCtorParam(nameof(AcceptApplicationRejectionAppealCommand.TenantId), opt =>
-                opt.MapFrom(src => src.TenantId))
-            .ForCtorParam(nameof(AcceptApplicationRejectionAppealCommand.ApplicationId), opt =>
-                opt.MapFrom(src => src.ApplicationId));
+        
         
         this.CreateMap<ApplicationRejectionAppealApproveRequest, ApproveApplicationRejectionAppealCommand>()
             .ForCtorParam(nameof(ApproveApplicationRejectionAppealCommand.TenantId), opt =>
@@ -98,11 +93,6 @@ public sealed class MapRequestsToCommands : Profile
             .ForCtorParam(nameof(RejectApplicationRejectionAppealCommand.RejectDate), opt =>
                 opt.MapFrom(src => src.RejectionDate));
 
-        this.CreateMap<ApplicationRejectionAppealDismissRequest, DismissApplicationRejectionAppealCommand>()
-            .ForCtorParam(nameof(ApproveApplicationRejectionAppealCommand.TenantId), opt =>
-                opt.MapFrom(src => src.TenantId))
-            .ForCtorParam(nameof(ApproveApplicationRejectionAppealCommand.ApplicationId), opt =>
-                opt.MapFrom(src => src.ApplicationId));
         
         this.CreateMap<ApplicationRecommendationRequest, RequestRecommendationCommand>()
             .ForCtorParam(nameof(RequestRecommendationCommand.TenantId), opt =>

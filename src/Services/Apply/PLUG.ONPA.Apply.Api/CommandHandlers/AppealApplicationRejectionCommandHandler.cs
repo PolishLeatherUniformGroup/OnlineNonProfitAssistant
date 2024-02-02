@@ -9,9 +9,9 @@ namespace PLUG.ONPA.Apply.Api.CommandHandlers;
 
 public sealed class AppealApplicationRejectionCommandHandler : CommandHandlerBase<AppealApplicationRejectionCommand>
 {
-    private readonly IAggregateRepository<Application> aggregateRepository;
+    private readonly IAggregateRepository<Domain.Model.Domain> aggregateRepository;
 
-    public AppealApplicationRejectionCommandHandler(IAggregateRepository<Application> aggregateRepository)
+    public AppealApplicationRejectionCommandHandler(IAggregateRepository<Domain.Model.Domain> aggregateRepository)
     {
         this.aggregateRepository = aggregateRepository;
     }
@@ -27,6 +27,7 @@ public sealed class AppealApplicationRejectionCommandHandler : CommandHandlerBas
                     new AggregateNotFoundException($"Application {request.ApplicationId} not found"));
             }
             aggregate.AppealRejection(request.AppealDate, request.Reason);
+            await this.aggregateRepository.SaveAsync(aggregate, cancellationToken);
             return aggregate.AggregateId;
         }
         catch (Exception ex)

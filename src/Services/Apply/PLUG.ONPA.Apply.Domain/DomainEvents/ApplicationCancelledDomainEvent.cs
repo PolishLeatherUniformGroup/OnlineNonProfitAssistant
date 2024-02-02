@@ -4,7 +4,7 @@ using PLUG.ONPA.Common.Models;
 
 namespace PLUG.ONPA.Apply.Domain.DomainEvents;
 
-public class ApplicationCancelledDomainEvent :DomainEventBase
+public sealed class ApplicationCancelledDomainEvent :DomainEventBase
 {
     public NonEmptyString Email { get; private set; }
     public DateTime CancellationDate { get; private set; }

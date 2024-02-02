@@ -4,7 +4,7 @@ using PLUG.ONPA.Common.Models;
 
 namespace PLUG.ONPA.Apply.Domain.DomainEvents;
 
-public class ApplicationAcceptedDomainEvent : DomainEventBase
+public sealed class ApplicationAcceptedDomainEvent : DomainEventBase
 {
     public Money RequiredFee { get; private set; }
     public NonEmptyString Email { get; private set; }

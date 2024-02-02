@@ -5,7 +5,7 @@ using PLUG.ONPA.Common.Models;
 
 namespace PLUG.ONPA.Apply.Domain.ChangeEvents;
 
-public class ApplicationAcceptedChangeEvent : ChangeEventBase
+public sealed class ApplicationAcceptedChangeEvent : ChangeEventBase
 {
     public ApplicationStatus Status { get; private set; }
     public Money RequiredFee { get; private set; }

@@ -9,6 +9,7 @@ public abstract class ChangeEventBase : IChangeEvent, IEquatable<ChangeEventBase
     public Guid? TenantId { get; }
     public long Version { get; }
     public DateTime Timestamp { get; }
+    // ReSharper disable once UnassignedGetOnlyAutoProperty
     public Type AggregateType { get; }
 
     public abstract IChangeEvent WithAggregate(Guid aggregateId, long version, Type aggregateType,

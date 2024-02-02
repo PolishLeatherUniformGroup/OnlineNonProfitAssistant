@@ -4,25 +4,25 @@ using PLUG.ONPA.Common.Domain.Abstractions;
 
 namespace PLUG.ONPA.Apply.Domain.ChangeEvents;
 
-public class ApplicationRecommendationRequestedChangeEvent :ChangeEventBase
+public sealed class ApplicationRecommendationRequestedChangeEvent :ChangeEventBase
 {
     public DateTime RequestedAt { get; private set; }
     public ApplicationStatus Status { get; private set; }
 
     public ApplicationRecommendationRequestedChangeEvent(DateTime requestedAt, ApplicationStatus status)
     {
-        RequestedAt = requestedAt;
-        Status = status;
+        this.RequestedAt = requestedAt;
+        this.Status = status;
     }
 
     public ApplicationRecommendationRequestedChangeEvent(Guid aggregateId, long version, Guid? tenantId, DateTime requestedAt, ApplicationStatus status) : base(aggregateId, version, tenantId)
     {
-        RequestedAt = requestedAt;
-        Status = status;
+        this.RequestedAt = requestedAt;
+        this.Status = status;
     }
 
     public override IChangeEvent WithAggregate(Guid aggregateId, long version, Type aggregateType, Guid? tenantId = null)
     {
-        return new ApplicationRecommendationRequestedChangeEvent(aggregateId, version, tenantId, RequestedAt, Status);
+        return new ApplicationRecommendationRequestedChangeEvent(aggregateId, version, tenantId, this.RequestedAt, this.Status);
     }
 }

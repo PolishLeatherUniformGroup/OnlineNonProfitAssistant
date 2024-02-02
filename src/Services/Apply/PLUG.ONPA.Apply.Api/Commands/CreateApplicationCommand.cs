@@ -2,7 +2,7 @@ using PLUG.ONPA.Common.Application;
 
 namespace PLUG.ONPA.Apply.Api.Commands;
 
-public record CreateApplicationFormCommand(
+public sealed record CreateApplicationCommand(
     Guid? TenantId,
     string FirstName,
     string LastName,

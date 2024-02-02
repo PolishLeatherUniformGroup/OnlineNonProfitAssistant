@@ -5,7 +5,7 @@ using PLUG.ONPA.Common.Models;
 
 namespace PLUG.ONPA.Apply.Domain.DomainEvents;
 
-public class ApplicationFormReceivedDomainEvent : DomainEventBase
+public sealed class ApplicationReceivedDomainEvent : DomainEventBase
 {
     public NonEmptyString FirstName { get; private set; }
     public NonEmptyString LastName { get; private set; }
@@ -16,7 +16,7 @@ public class ApplicationFormReceivedDomainEvent : DomainEventBase
     public List<ApplicationRecommendation> Recommendations { get; private set; }
     public DateTime ApplicationDate { get; private set; }
 
-    public ApplicationFormReceivedDomainEvent(NonEmptyString firstName, NonEmptyString lastName, Address address, DateOnly birthDate, NonEmptyString email, NonEmptyString phoneNumber, List<ApplicationRecommendation> recommendations, DateTime applicationDate)
+    public ApplicationReceivedDomainEvent(NonEmptyString firstName, NonEmptyString lastName, Address address, DateOnly birthDate, NonEmptyString email, NonEmptyString phoneNumber, List<ApplicationRecommendation> recommendations, DateTime applicationDate)
     {
         this.FirstName = firstName;
         this.LastName = lastName;
@@ -28,7 +28,7 @@ public class ApplicationFormReceivedDomainEvent : DomainEventBase
         this.ApplicationDate = applicationDate;
     }
 
-    private ApplicationFormReceivedDomainEvent(Guid aggregateId, Guid? tenantId, NonEmptyString firstName, NonEmptyString lastName, Address address, DateOnly birthDate, NonEmptyString email, NonEmptyString phoneNumber, List<ApplicationRecommendation> recommendations, DateTime applicationDate) : base(aggregateId, tenantId)
+    private ApplicationReceivedDomainEvent(Guid aggregateId, Guid? tenantId, NonEmptyString firstName, NonEmptyString lastName, Address address, DateOnly birthDate, NonEmptyString email, NonEmptyString phoneNumber, List<ApplicationRecommendation> recommendations, DateTime applicationDate) : base(aggregateId, tenantId)
     {
         this.FirstName = firstName;
         this.LastName = lastName;
@@ -42,7 +42,7 @@ public class ApplicationFormReceivedDomainEvent : DomainEventBase
 
     public override IDomainEvent WithAggregate(Guid aggregateId, Guid? tenantId)
     {
-        return new ApplicationFormReceivedDomainEvent(aggregateId,
+        return new ApplicationReceivedDomainEvent(aggregateId,
             tenantId,
             this.FirstName,
             this.LastName,

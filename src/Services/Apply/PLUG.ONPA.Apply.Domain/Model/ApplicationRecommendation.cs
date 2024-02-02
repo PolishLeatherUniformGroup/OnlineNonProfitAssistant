@@ -12,7 +12,7 @@ public class ApplicationRecommendation :Entity
 
     public ApplicationRecommendation(Guid id, CardNumber recommender) : base(id)
     {
-        Recommender = recommender;
+        this.Recommender = recommender;
     }
 
     public bool IsEndorsed => this.isEndorsed.GetValueOrDefault(false);

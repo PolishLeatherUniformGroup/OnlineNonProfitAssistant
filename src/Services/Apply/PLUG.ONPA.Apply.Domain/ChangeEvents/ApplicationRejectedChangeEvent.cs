@@ -4,7 +4,7 @@ using PLUG.ONPA.Common.Domain.Abstractions;
 
 namespace PLUG.ONPA.Apply.Domain.ChangeEvents;
 
-public class ApplicationRejectedChangeEvent :ChangeEventBase
+public sealed class ApplicationRejectedChangeEvent :ChangeEventBase
 {
     public ApplicationStatus Status { get; private set; }
     public DateTime DecisionDate { get; private set; }
@@ -21,14 +21,14 @@ public class ApplicationRejectedChangeEvent :ChangeEventBase
 
     private ApplicationRejectedChangeEvent(Guid aggregateId, long version, Guid? tenantId, ApplicationStatus status, DateTime decisionDate, string decisionReason, DateTime appealDeadline) : base(aggregateId, version, tenantId)
     {
-        Status = status;
-        DecisionDate = decisionDate;
-        DecisionReason = decisionReason;
-        AppealDeadline = appealDeadline;
+        this.Status = status;
+        this.DecisionDate = decisionDate;
+        this.DecisionReason = decisionReason;
+        this.AppealDeadline = appealDeadline;
     }
 
     public override IChangeEvent WithAggregate(Guid aggregateId, long version, Type aggregateType, Guid? tenantId = null)
     {
-        return new ApplicationRejectedChangeEvent(aggregateId, version, tenantId, Status, DecisionDate, DecisionReason, AppealDeadline);
+        return new ApplicationRejectedChangeEvent(aggregateId, version, tenantId, this.Status, this.DecisionDate, this.DecisionReason, this.AppealDeadline);
     }
 }

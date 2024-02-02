@@ -4,7 +4,7 @@ using PLUG.ONPA.Common.Models;
 
 namespace PLUG.ONPA.Apply.Domain.DomainEvents;
 
-public class ApplicationMembershipFeePaidDomainEvent :DomainEventBase
+public sealed class ApplicationMembershipFeePaidDomainEvent :DomainEventBase
 {
     public NonEmptyString Email { get; private set; }
     public DateTime PaidDate { get; private set; }

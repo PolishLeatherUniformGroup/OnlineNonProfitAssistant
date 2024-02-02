@@ -4,7 +4,7 @@ using PLUG.ONPA.Common.Models;
 
 namespace PLUG.ONPA.Apply.Domain.DomainEvents;
 
-public class ApplicationEndorsedDomainEvent : DomainEventBase
+public sealed class ApplicationEndorsedDomainEvent : DomainEventBase
 {
     public NonEmptyString Email { get; private set; }
 

@@ -3,15 +3,16 @@ using FluentAssertions;
 using PLUG.ONPA.Apply.Domain.ChangeEvents;
 using PLUG.ONPA.Apply.Domain.DomainEvents;
 using PLUG.ONPA.Apply.Domain.Model;
+using PLUG.ONPA.Common.Domain.Exceptions;
 using PLUG.ONPA.Common.Models;
 
 namespace PLUG.ONPA.Apply.UnitTests;
 
-public class ApplicationFormTests
+public class ApplicationTests
 {
     private readonly IFixture fixture;
 
-    public ApplicationFormTests()
+    public ApplicationTests()
     {
         this.fixture = new Fixture();
     }
@@ -20,23 +21,23 @@ public class ApplicationFormTests
     public void CreateApplicationForm_should_emmit_ApplicationFormCreatedChangeEvent()
     {
         // Arrange
-        var firstName = fixture.Create<string>();
-        var lastName = fixture.Create<string>();
-        var addressCountry = fixture.Create<string>();
-        var addressCity = fixture.Create<string>();
-        var addressStreet = fixture.Create<string>();
-        var addressNumber = fixture.Create<string>();
+        var firstName = this.fixture.Create<string>();
+        var lastName = this.fixture.Create<string>();
+        var addressCountry = this.fixture.Create<string>();
+        var addressCity = this.fixture.Create<string>();
+        var addressStreet = this.fixture.Create<string>();
+        var addressNumber = this.fixture.Create<string>();
         var address = new Address(addressCountry, addressCity, addressNumber, addressStreet);
-        var (birthDate, _) = fixture.Create<DateTime>();
-        var email = fixture.Create<string>();
-        var phoneNumber = fixture.Create<string>();
-        var applicationDate = fixture.Create<DateTime>();
-        var recommender = fixture.Create<string>();
+        var (birthDate, _) = this.fixture.Create<DateTime>();
+        var email = this.fixture.Create<string>();
+        var phoneNumber = this.fixture.Create<string>();
+        var applicationDate = this.fixture.Create<DateTime>();
+        var recommender = this.fixture.Create<string>();
         var recommendation = new ApplicationRecommendation(Guid.NewGuid(),
             new CardNumber(this.fixture.Create<string>(), this.fixture.Create<int>()));
         
         // Act
-        var sut = new ApplicationForm(firstName,
+        var sut = new Application(firstName,
             lastName,
             address,
             birthDate,
@@ -61,16 +62,16 @@ public class ApplicationFormTests
         sut.Recommendations.Should().HaveCount(1);
         sut.Recommendations.Should().Contain(recommendation);
         sut.GetChangeEvents().Should().HaveCount(1);
-        sut.GetChangeEvents().Should().ContainItemsAssignableTo<ApplicationFormCreatedChangeEvent>();
+        sut.GetChangeEvents().Should().ContainItemsAssignableTo<ApplicationCreatedChangeEvent>();
         sut.GetDomainEvents().Should().HaveCount(1);
-        sut.GetDomainEvents().Should().ContainItemsAssignableTo<ApplicationFormReceivedDomainEvent>();
+        sut.GetDomainEvents().Should().ContainItemsAssignableTo<ApplicationReceivedDomainEvent>();
     }
     
     [Fact]
     public void AcceptApplicationForm_should_emmit_ApplicationAcceptedChangeEvent()
     {
         // Arrange
-        var sut = CreateValidApplicationForm();
+        var sut = this.CreateValidApplicationForm();
         var requiredFee = this.fixture.Create<decimal>();
         
         // Act
@@ -93,7 +94,7 @@ public class ApplicationFormTests
     public void DismissApplicationForm_should_emmit_ApplicationDismissedChangeEvent()
     {
         // Arrange
-        var sut = CreateValidApplicationForm();
+        var sut = this.CreateValidApplicationForm();
         
         
         // Act
@@ -113,7 +114,7 @@ public class ApplicationFormTests
     public void RequestRecommendation_should_emmit_ApplicationRecommendationRequestedChangeEvent()
     {
         // Arrange
-        var sut = CreateValidApplicationForm();
+        var sut = this.CreateValidApplicationForm();
         var requiredFee = this.fixture.Create<decimal>();
         sut.AcceptApplication(Money.FromPln(requiredFee));
         var requestedAt = this.fixture.Create<DateTime>();
@@ -135,7 +136,7 @@ public class ApplicationFormTests
     public void EndorseApplication_should_emmit_ApplicationEndorsedChangeEvent()
     {
         // Arrange
-        var sut = CreateValidApplicationForm();
+        var sut = this.CreateValidApplicationForm();
         var requiredFee = this.fixture.Create<decimal>();
         sut.AcceptApplication(Money.FromPln(requiredFee));
         sut.RequestRecommendation(this.fixture.Create<DateTime>());
@@ -158,7 +159,7 @@ public class ApplicationFormTests
     public void EndorseApplication_should_throwException_when_recommendationNotFound()
     {
         // Arrange
-        var sut = CreateValidApplicationForm();
+        var sut = this.CreateValidApplicationForm();
         var requiredFee = this.fixture.Create<decimal>();
         sut.AcceptApplication(Money.FromPln(requiredFee));
         sut.RequestRecommendation(this.fixture.Create<DateTime>());
@@ -167,7 +168,7 @@ public class ApplicationFormTests
        var result = ()=> sut.EndorseApplication(Guid.NewGuid());
         
         // Assert
-       result.Should().Throw<InvalidOperationException>();
+       result.Should().Throw<DomainException>();
        
     }
     
@@ -175,7 +176,7 @@ public class ApplicationFormTests
     public void OpposeApplication_should_emmit_ApplicationEndorsedChangeEvent()
     {
         // Arrange
-        var sut = CreateValidApplicationForm();
+        var sut = this.CreateValidApplicationForm();
         var requiredFee = this.fixture.Create<decimal>();
         sut.AcceptApplication(Money.FromPln(requiredFee));
         sut.RequestRecommendation(this.fixture.Create<DateTime>());
@@ -197,7 +198,7 @@ public class ApplicationFormTests
     public void OpposeApplication_should_throwException_when_recommendationNotFound()
     {
         // Arrange
-        var sut = CreateValidApplicationForm();
+        var sut = this.CreateValidApplicationForm();
         var requiredFee = this.fixture.Create<decimal>();
         sut.AcceptApplication(Money.FromPln(requiredFee));
         sut.RequestRecommendation(this.fixture.Create<DateTime>());
@@ -206,7 +207,7 @@ public class ApplicationFormTests
         var result = ()=> sut.OpposeApplication(Guid.NewGuid());
         
         // Assert
-        result.Should().Throw<InvalidOperationException>();
+        result.Should().Throw<DomainException>();
        
     }
     
@@ -214,7 +215,7 @@ public class ApplicationFormTests
     public void RegisterMembershipFeePayment_should_emmit_ApplicationMembershipFeePaymentReceivedChangeEvent()
     {
         // Arrange
-        var sut = CreateValidApplicationForm();
+        var sut = this.CreateValidApplicationForm();
         var requiredFee = this.fixture.Create<decimal>();
         sut.AcceptApplication(Money.FromPln(requiredFee));
         sut.RequestRecommendation(this.fixture.Create<DateTime>());
@@ -238,7 +239,7 @@ public class ApplicationFormTests
     public void ApproveApplication_should_emmit_ApplicationApprovedChangeEvent()
     {
         // Arrange
-        var sut = CreateValidApplicationForm();
+        var sut = this.CreateValidApplicationForm();
         var requiredFee = this.fixture.Create<decimal>();
         sut.AcceptApplication(Money.FromPln(requiredFee));
         sut.RequestRecommendation(this.fixture.Create<DateTime>());
@@ -262,7 +263,7 @@ public class ApplicationFormTests
     public void RejectApplication_should_emmit_ApplicationRejectedChangeEvent()
     {
         // Arrange
-        var sut = CreateValidApplicationForm();
+        var sut = this.CreateValidApplicationForm();
         var requiredFee = this.fixture.Create<decimal>();
         sut.AcceptApplication(Money.FromPln(requiredFee));
         sut.RequestRecommendation(this.fixture.Create<DateTime>());
@@ -291,7 +292,7 @@ public class ApplicationFormTests
     public void AppealApplicationRejection_should_emmit_ApplicationRejectionAppealDismissedChangeEvent_whenAppealedOverDeadline()
     {
         // Arrange
-        var sut = CreateValidApplicationForm();
+        var sut = this.CreateValidApplicationForm();
         var requiredFee = this.fixture.Create<decimal>();
         sut.AcceptApplication(Money.FromPln(requiredFee));
         sut.RequestRecommendation(this.fixture.Create<DateTime>());
@@ -322,7 +323,7 @@ public class ApplicationFormTests
     public void AppealApplicationRejection_should_emmit_ApplicationRejectionAppealReceivedChangeEvent_whenAppealedBeforeDeadline()
     {
         // Arrange
-        var sut = CreateValidApplicationForm();
+        var sut = this.CreateValidApplicationForm();
         var requiredFee = this.fixture.Create<decimal>();
         sut.AcceptApplication(Money.FromPln(requiredFee));
         sut.RequestRecommendation(this.fixture.Create<DateTime>());
@@ -354,7 +355,7 @@ public class ApplicationFormTests
     public void ApproveAppeal_should_emmit_ApplicationRejectionAppealApprovedChangeEvent()
     {
         // Arrange
-        var sut = CreateValidApplicationForm();
+        var sut = this.CreateValidApplicationForm();
         var requiredFee = this.fixture.Create<decimal>();
         sut.AcceptApplication(Money.FromPln(requiredFee));
         sut.RequestRecommendation(this.fixture.Create<DateTime>());
@@ -388,7 +389,7 @@ public class ApplicationFormTests
     public void RejectAppeal_should_emmit_ApplicationRejectionAppealRejectedChangeEvent()
     {
         // Arrange
-        var sut = CreateValidApplicationForm();
+        var sut = this.CreateValidApplicationForm();
         var requiredFee = this.fixture.Create<decimal>();
         sut.AcceptApplication(Money.FromPln(requiredFee));
         sut.RequestRecommendation(this.fixture.Create<DateTime>());
@@ -423,7 +424,7 @@ public class ApplicationFormTests
     public void CancelApplication_should_emmit_ApplicationCancelledChangeEvent()
     {
         // Arrange
-        var sut = CreateValidApplicationForm();
+        var sut = this.CreateValidApplicationForm();
         var cancellationDate = this.fixture.Create<DateTime>();
         
         // Act
@@ -439,24 +440,24 @@ public class ApplicationFormTests
         sut.GetDomainEvents().Should().ContainItemsAssignableTo<ApplicationCancelledDomainEvent>();
     }
     
-    private ApplicationForm CreateValidApplicationForm()
+    private Application CreateValidApplicationForm()
     {
-        var firstName = fixture.Create<string>();
-        var lastName = fixture.Create<string>();
-        var addressCountry = fixture.Create<string>();
-        var addressCity = fixture.Create<string>();
-        var addressStreet = fixture.Create<string>();
-        var addressNumber = fixture.Create<string>();
+        var firstName = this.fixture.Create<string>();
+        var lastName = this.fixture.Create<string>();
+        var addressCountry = this.fixture.Create<string>();
+        var addressCity = this.fixture.Create<string>();
+        var addressStreet = this.fixture.Create<string>();
+        var addressNumber = this.fixture.Create<string>();
         var address = new Address(addressCountry, addressCity, addressNumber, addressStreet);
-        var (birthDate, _) = fixture.Create<DateTime>();
-        var email = fixture.Create<string>();
-        var phoneNumber = fixture.Create<string>();
-        var applicationDate = fixture.Create<DateTime>();
-        var recommender = fixture.Create<string>();
+        var (birthDate, _) = this.fixture.Create<DateTime>();
+        var email = this.fixture.Create<string>();
+        var phoneNumber = this.fixture.Create<string>();
+        var applicationDate = this.fixture.Create<DateTime>();
+        var recommender = this.fixture.Create<string>();
         var recommendation = new ApplicationRecommendation(Guid.NewGuid(),
             new CardNumber(this.fixture.Create<string>(), this.fixture.Create<int>()));
         
-        var applicationForm=  new ApplicationForm(firstName,
+        var applicationForm=  new Application(firstName,
             lastName,
             address,
             birthDate,

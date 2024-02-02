@@ -4,7 +4,7 @@ using PLUG.ONPA.Common.Models;
 
 namespace PLUG.ONPA.Apply.Domain.DomainEvents;
 
-public class ApplicationApprovedDomainEvent : DomainEventBase
+public sealed class ApplicationApprovedDomainEvent : DomainEventBase
 {
     public DateTime DecisionDate { get; private set; }
     public NonEmptyString Email { get;  private set; }

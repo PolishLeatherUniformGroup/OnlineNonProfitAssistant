@@ -4,7 +4,7 @@ using PLUG.ONPA.Common.Models;
 
 namespace PLUG.ONPA.Apply.Domain.DomainEvents;
 
-public class ApplicationRejectionAppealDismissedDomainEvent : DomainEventBase
+public sealed class ApplicationRejectionAppealDismissedDomainEvent : DomainEventBase
 {
     public NonEmptyString Email { get; private set; }
     public DateTime AppealDeadline { get; private set; }

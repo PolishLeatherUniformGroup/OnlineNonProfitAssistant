@@ -24,11 +24,11 @@ public class Address : ValueObject
 
     protected override IEnumerable<object> GetEqualityComponents()
     {
-        yield return Country;
-        yield return State;
-        yield return City;
-        yield return PostalCode;
-        yield return Street;
-        yield return AddressLine2;
+        yield return this.Country;
+        yield return this.State;
+        yield return this.City;
+        yield return this.PostalCode;
+        yield return this.Street;
+        yield return this.AddressLine2;
     }
 }

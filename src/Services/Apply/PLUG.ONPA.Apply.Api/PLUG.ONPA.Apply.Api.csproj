@@ -9,6 +9,7 @@
 
     <ItemGroup>
         <PackageReference Include="MediatR" Version="12.2.0" />
+        <PackageReference Include="MediatR.Extensions.Microsoft.DependencyInjection" Version="11.1.0" />
         <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="8.0.0"/>
         <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="8.0.0" />
         <PackageReference Include="Swashbuckle.AspNetCore" Version="6.4.0"/>
@@ -17,6 +18,10 @@
     <ItemGroup>
       <ProjectReference Include="..\..\..\shared\PLUG.ONPA.Common.Application\PLUG.ONPA.Common.Application.csproj" />
       <ProjectReference Include="..\PLUG.ONPA.Apply.Domain\PLUG.ONPA.Apply.Domain.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Folder Include="DomainEventHandlers\" />
     </ItemGroup>
 
 </Project>

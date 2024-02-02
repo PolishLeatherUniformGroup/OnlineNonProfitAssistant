@@ -4,7 +4,7 @@ using PLUG.ONPA.Common.Models;
 
 namespace PLUG.ONPA.Apply.Domain.DomainEvents;
 
-public class ApplicationRecommendationRequestedDomainEvent :DomainEventBase
+public sealed class ApplicationRecommendationRequestedDomainEvent :DomainEventBase
 {
     public CardNumber RecommenderCard { get; private set; }
     public DateTime RequestedAt { get; private set; }

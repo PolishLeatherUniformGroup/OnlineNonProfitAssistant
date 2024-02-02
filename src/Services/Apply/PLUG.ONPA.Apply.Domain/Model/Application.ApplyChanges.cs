@@ -2,9 +2,9 @@ using PLUG.ONPA.Apply.Domain.ChangeEvents;
 
 namespace PLUG.ONPA.Apply.Domain.Model;
 
-public partial class ApplicationForm
+public partial class Application
 {
-    public void ApplyChange(ApplicationFormCreatedChangeEvent @event)
+    public void ApplyChange(ApplicationCreatedChangeEvent @event)
     {
         this.FirstName = @event.FirstName;
         this.LastName = @event.LastName;
@@ -24,7 +24,7 @@ public partial class ApplicationForm
     {
         this.RequiredMembershipFee = @event.RequiredFee;
         this.Status = @event.Status;
-        foreach (var recommendation in recommendations)
+        foreach (var recommendation in this.recommendations)
         {
             recommendation.MarkAsValid();
         }
@@ -65,7 +65,7 @@ public partial class ApplicationForm
     public void ApplyChange(ApplicationRecommendationRequestedChangeEvent @event)
     {
         this.Status = @event.Status;
-        foreach (var recommendation in recommendations)
+        foreach (var recommendation in this.recommendations)
         {
             recommendation.RequestRecommendation(@event.RequestedAt);   
         }

@@ -3,25 +3,26 @@ using PLUG.ONPA.Apply.Api.Commands;
 using PLUG.ONPA.Apply.Domain.Model;
 using PLUG.ONPA.Common.Application;
 using PLUG.ONPA.Common.Domain.Abstractions;
+using PLUG.ONPA.Common.Domain.Exceptions;
 using PLUG.ONPA.Common.Models;
 
 namespace PLUG.ONPA.Apply.Api.CommandHandlers;
 
-public class CreateApplicationFormCommandHandler : CommandHandlerBase<CreateApplicationFormCommand>
+public sealed class CreateApplicationCommandHandler : CommandHandlerBase<CreateApplicationCommand>
 {
-    private readonly IAggregateRepository<ApplicationForm> aggregateRepository;
+    private readonly IAggregateRepository<Application> aggregateRepository;
 
-    public CreateApplicationFormCommandHandler(IAggregateRepository<ApplicationForm> aggregateRepository)
+    public CreateApplicationCommandHandler(IAggregateRepository<Application> aggregateRepository)
     {
         this.aggregateRepository = aggregateRepository;
     }
 
-    public override async Task<Result<bool>> Handle(CreateApplicationFormCommand request, CancellationToken cancellationToken)
+    public override async Task<Result<bool>> Handle(CreateApplicationCommand request, CancellationToken cancellationToken)
     {
         try
         {
             var (birthDate, _) = request.BirthDate;
-            var aggregate = new ApplicationForm(
+            var aggregate = new Application(
                 request.FirstName,
                 request.LastName,
                 new Address(request.AddressCountry, request.AddressCity, request.AddressPostalCode,
@@ -35,10 +36,10 @@ public class CreateApplicationFormCommandHandler : CommandHandlerBase<CreateAppl
                 request.ApplicationDate,
                 request.TenantId
             );
-            await aggregateRepository.SaveAsync(aggregate, cancellationToken);
+            await this.aggregateRepository.SaveAsync(aggregate, cancellationToken);
             return true;
         }
-        catch (Exception e)
+        catch (DomainException e)
         {
             return new Result<bool>(e);
         }

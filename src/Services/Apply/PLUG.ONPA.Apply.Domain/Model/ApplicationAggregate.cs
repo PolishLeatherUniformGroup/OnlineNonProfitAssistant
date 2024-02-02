@@ -6,7 +6,7 @@ using PLUG.ONPA.Common.Models;
 
 namespace PLUG.ONPA.Apply.Domain.Model;
 
-public partial class Domain : AggregateRoot
+public partial class ApplicationAggregate : AggregateRoot
 {
     public NonEmptyString FirstName { get; private set; }
     public NonEmptyString LastName { get; private set; }
@@ -30,10 +30,10 @@ public partial class Domain : AggregateRoot
 
     public string? FinalDecisionReason { get; private set; }
 
-    private readonly List<ApplicationRecommendation> recommendations = new List<ApplicationRecommendation>();
+    private readonly List<ApplicationRecommendation> recommendations = new ();
     public IReadOnlyList<ApplicationRecommendation> Recommendations => this.recommendations;
 
-    public Domain(NonEmptyString firstName, NonEmptyString lastName, Address address, DateOnly birthDate,
+    public ApplicationAggregate(NonEmptyString firstName, NonEmptyString lastName, Address address, DateOnly birthDate,
         NonEmptyString email, NonEmptyString phoneNumber, List<ApplicationRecommendation> recommendations,
         DateTime applicationDate,
         Guid? tenantId = null)

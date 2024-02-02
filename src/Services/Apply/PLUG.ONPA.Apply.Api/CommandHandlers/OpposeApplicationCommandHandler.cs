@@ -9,9 +9,9 @@ namespace PLUG.ONPA.Apply.Api.CommandHandlers;
 
 public sealed class OpposeApplicationCommandHandler : CommandHandlerBase<OpposeApplicationCommand>
 {
-    private readonly IAggregateRepository<Domain.Model.Domain> aggregateRepository;
+    private readonly IAggregateRepository<Domain.Model.ApplicationAggregate> aggregateRepository;
 
-    public OpposeApplicationCommandHandler(IAggregateRepository<Domain.Model.Domain> aggregateRepository)
+    public OpposeApplicationCommandHandler(IAggregateRepository<Domain.Model.ApplicationAggregate> aggregateRepository)
     {
         this.aggregateRepository = aggregateRepository;
     }

@@ -10,9 +10,9 @@ namespace PLUG.ONPA.Apply.Api.CommandHandlers;
 
 public sealed class CreateApplicationCommandHandler : CommandHandlerBase<CreateApplicationCommand>
 {
-    private readonly IAggregateRepository<Domain.Model.Domain> aggregateRepository;
+    private readonly IAggregateRepository<Domain.Model.ApplicationAggregate> aggregateRepository;
 
-    public CreateApplicationCommandHandler(IAggregateRepository<Domain.Model.Domain> aggregateRepository)
+    public CreateApplicationCommandHandler(IAggregateRepository<Domain.Model.ApplicationAggregate> aggregateRepository)
     {
         this.aggregateRepository = aggregateRepository;
     }
@@ -21,7 +21,7 @@ public sealed class CreateApplicationCommandHandler : CommandHandlerBase<CreateA
     {
         try
         {
-            var aggregate = new Domain.Model.Domain(
+            var aggregate = new Domain.Model.ApplicationAggregate(
                 request.FirstName,
                 request.LastName,
                 new Address(

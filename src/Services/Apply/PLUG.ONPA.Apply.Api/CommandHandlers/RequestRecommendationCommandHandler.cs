@@ -9,9 +9,9 @@ namespace PLUG.ONPA.Apply.Api.CommandHandlers;
 
 public sealed class RequestRecommendationCommandHandler: CommandHandlerBase<RequestRecommendationCommand>
 {
-    private readonly IAggregateRepository<Domain.Model.Domain> aggregateRepository;
+    private readonly IAggregateRepository<Domain.Model.ApplicationAggregate> aggregateRepository;
 
-    public RequestRecommendationCommandHandler(IAggregateRepository<Domain.Model.Domain> aggregateRepository)
+    public RequestRecommendationCommandHandler(IAggregateRepository<Domain.Model.ApplicationAggregate> aggregateRepository)
     {
         this.aggregateRepository = aggregateRepository;
     }

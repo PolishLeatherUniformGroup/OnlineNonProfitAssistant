@@ -8,11 +8,11 @@ using PLUG.ONPA.Common.Models;
 
 namespace PLUG.ONPA.Apply.UnitTests;
 
-public class DomainTests
+public class ApplicationAggregateTests
 {
     private readonly IFixture fixture;
 
-    public DomainTests()
+    public ApplicationAggregateTests()
     {
         this.fixture = new Fixture();
     }
@@ -37,7 +37,7 @@ public class DomainTests
             new CardNumber(this.fixture.Create<string>(), this.fixture.Create<int>()));
         
         // Act
-        var sut = new Domain.Model.Domain(firstName,
+        var sut = new Domain.Model.ApplicationAggregate(firstName,
             lastName,
             address,
             birthDate,
@@ -104,6 +104,26 @@ public class DomainTests
         sut.Status.Should().Be(ApplicationStatus.Invalid);
         sut.Recommendations.Should().HaveCount(1);
         sut.Recommendations.All(x=>!x.IsValid).Should().BeTrue();
+        sut.GetChangeEvents().Should().HaveCount(1);
+        sut.GetChangeEvents().Should().ContainItemsAssignableTo<ApplicationDismissedChangeEvent>();
+        sut.GetDomainEvents().Should().HaveCount(1);
+        sut.GetDomainEvents().Should().ContainItemsAssignableTo<ApplicationDismissedDomainEvent>();
+    }
+    
+    [Fact]
+    public void DismissApplicationForm_should_emmit_ApplicationDismissedChangeEventWithOneValidRecommendation()
+    {
+        // Arrange
+        var sut = this.CreateValidApplicationWithMultipleRecommendations();
+        
+        
+        // Act
+        sut.DismissApplication(new List<CardNumber>(){sut.Recommendations.First().Recommender});
+        
+        // Assert
+        sut.Status.Should().Be(ApplicationStatus.Invalid);
+        sut.Recommendations.Should().HaveCount(2);
+        sut.Recommendations.All(x=>!x.IsValid).Should().BeFalse();
         sut.GetChangeEvents().Should().HaveCount(1);
         sut.GetChangeEvents().Should().ContainItemsAssignableTo<ApplicationDismissedChangeEvent>();
         sut.GetDomainEvents().Should().HaveCount(1);
@@ -236,6 +256,21 @@ public class DomainTests
     }
 
     [Fact]
+    public void RegisterMembershipFeePayment_should_fail_whenInvalidStatus()
+    {
+        // Arrange
+        var sut = this.CreateValidApplicationForm();
+        var requiredFee = this.fixture.Create<decimal>();
+
+        var paidDate = this.fixture.Create<DateTime>();
+        // Act
+        var action = () => sut.RegisterMembershipFeePayment(Money.FromEur(requiredFee), paidDate);
+
+        // Assert
+        action.Should().Throw<DomainException>();
+    }
+
+    [Fact]
     public void ApproveApplication_should_emmit_ApplicationApprovedChangeEvent()
     {
         // Arrange
@@ -286,6 +321,27 @@ public class DomainTests
         sut.GetChangeEvents().Should().ContainItemsAssignableTo<ApplicationRejectedChangeEvent>();
         sut.GetDomainEvents().Should().HaveCount(5);
         sut.GetDomainEvents().Should().ContainItemsAssignableTo<ApplicationRejectedDomainEvent>();
+    }
+    
+    [Fact]
+    public void RejectApplication_should_fail_WhenNotAwaitsDecision()
+    {
+        // Arrange
+        var sut = this.CreateValidApplicationForm();
+        var requiredFee = this.fixture.Create<decimal>();
+        sut.AcceptApplication(Money.FromPln(requiredFee));
+        sut.RequestRecommendation(this.fixture.Create<DateTime>());
+      
+        var rejectionDate = this.fixture.Create<DateTime>();
+        sut.RegisterMembershipFeePayment(sut.RequiredMembershipFee,rejectionDate);
+        var reason = this.fixture.Create<string>();
+        var deadline = this.fixture.Create<DateTime>();
+        
+        // Act
+        var action =()=>sut.RejectApplication(rejectionDate,reason,deadline);
+        
+        // Assert
+       action.Should().Throw<DomainException>();
     }
     
     [Fact]
@@ -440,7 +496,7 @@ public class DomainTests
         sut.GetDomainEvents().Should().ContainItemsAssignableTo<ApplicationCancelledDomainEvent>();
     }
     
-    private Domain.Model.Domain CreateValidApplicationForm()
+    private Domain.Model.ApplicationAggregate CreateValidApplicationForm()
     {
         var firstName = this.fixture.Create<string>();
         var lastName = this.fixture.Create<string>();
@@ -457,7 +513,7 @@ public class DomainTests
         var recommendation = new ApplicationRecommendation(Guid.NewGuid(),
             new CardNumber(this.fixture.Create<string>(), this.fixture.Create<int>()));
         
-        var applicationForm=  new Domain.Model.Domain(firstName,
+        var applicationForm=  new Domain.Model.ApplicationAggregate(firstName,
             lastName,
             address,
             birthDate,
@@ -466,6 +522,40 @@ public class DomainTests
             new List<ApplicationRecommendation>()
             {
                 recommendation
+            },
+            applicationDate);
+        applicationForm.ClearChangeEvents();
+        applicationForm.ClearDomainEvents();
+        return applicationForm;
+    }
+    private Domain.Model.ApplicationAggregate CreateValidApplicationWithMultipleRecommendations()
+    {
+        var firstName = this.fixture.Create<string>();
+        var lastName = this.fixture.Create<string>();
+        var addressCountry = this.fixture.Create<string>();
+        var addressCity = this.fixture.Create<string>();
+        var addressStreet = this.fixture.Create<string>();
+        var addressNumber = this.fixture.Create<string>();
+        var address = new Address(addressCountry, addressCity, addressNumber, addressStreet);
+        var (birthDate, _) = this.fixture.Create<DateTime>();
+        var email = this.fixture.Create<string>();
+        var phoneNumber = this.fixture.Create<string>();
+        var applicationDate = this.fixture.Create<DateTime>();
+        var recommender = this.fixture.Create<string>();
+        var recommendationA = new ApplicationRecommendation(Guid.NewGuid(),
+            new CardNumber(this.fixture.Create<string>(), this.fixture.Create<int>()));
+         var recommendationB = new ApplicationRecommendation(Guid.NewGuid(),
+            new CardNumber(this.fixture.Create<string>(), this.fixture.Create<int>()));
+        
+        var applicationForm=  new Domain.Model.ApplicationAggregate(firstName,
+            lastName,
+            address,
+            birthDate,
+            email,
+            phoneNumber,
+            new List<ApplicationRecommendation>()
+            {
+                recommendationA,recommendationB
             },
             applicationDate);
         applicationForm.ClearChangeEvents();

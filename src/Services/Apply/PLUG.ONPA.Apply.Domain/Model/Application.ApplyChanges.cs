@@ -2,7 +2,7 @@ using PLUG.ONPA.Apply.Domain.ChangeEvents;
 
 namespace PLUG.ONPA.Apply.Domain.Model;
 
-public partial class Domain
+public partial class ApplicationAggregate
 {
     public void ApplyChange(ApplicationCreatedChangeEvent @event)
     {

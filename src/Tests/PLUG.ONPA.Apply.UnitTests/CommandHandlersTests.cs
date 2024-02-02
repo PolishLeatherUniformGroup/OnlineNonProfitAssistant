@@ -14,14 +14,14 @@ namespace PLUG.ONPA.Apply.UnitTests;
 public class CommandHandlersTests
 {
     private IFixture fixture;
-    private IAggregateRepository<Domain.Model.Domain> aggregateRepository;
+    private IAggregateRepository<Domain.Model.ApplicationAggregate> aggregateRepository;
     private ITenantSettingsService tenantSettingsService;
     
     public CommandHandlersTests()
     {
         this.fixture = new Fixture().Customize(new CompositeCustomization(
             new DateOnlyFixtureCustomization()));
-        this.aggregateRepository = Substitute.For<IAggregateRepository<Domain.Model.Domain>>();
+        this.aggregateRepository = Substitute.For<IAggregateRepository<Domain.Model.ApplicationAggregate>>();
         this.tenantSettingsService = Substitute.For<ITenantSettingsService>();
     }
     
@@ -43,7 +43,7 @@ public class CommandHandlersTests
         // Assert
         result.Should().NotBeNull();
         result.IsFaulted.Should().BeFalse();
-        aggregateRepository.Received(1).SaveAsync(Arg.Any<Domain.Model.Domain>(), Arg.Any<CancellationToken>());
+        aggregateRepository.Received(1).SaveAsync(Arg.Any<Domain.Model.ApplicationAggregate>(), Arg.Any<CancellationToken>());
     }
     
     [Fact]
@@ -81,7 +81,7 @@ public class CommandHandlersTests
             .Create();
         var handler = new AcceptApplicationCommandHandler(this.aggregateRepository);
         aggregateRepository.GetByIdAsync(application.AggregateId, application.TenantId, CancellationToken.None)
-            .Returns(null as Domain.Model.Domain);
+            .Returns(null as Domain.Model.ApplicationAggregate);
         
         // Act
         var result = await handler.Handle(command, CancellationToken.None);
@@ -131,7 +131,7 @@ public class CommandHandlersTests
             .Create();
         var handler = new RequestRecommendationCommandHandler(this.aggregateRepository);
         aggregateRepository.GetByIdAsync(application.AggregateId, application.TenantId, CancellationToken.None)
-            .Returns(null as Domain.Model.Domain);
+            .Returns(null as Domain.Model.ApplicationAggregate);
         
         // Act
         var result = await handler.Handle(command, CancellationToken.None);
@@ -181,7 +181,7 @@ public class CommandHandlersTests
             .Create();
         var handler = new DismissApplicationCommandHandler(this.aggregateRepository);
         aggregateRepository.GetByIdAsync(application.AggregateId, application.TenantId, CancellationToken.None)
-            .Returns(null as Domain.Model.Domain);
+            .Returns(null as Domain.Model.ApplicationAggregate);
         
         // Act
         var result = await handler.Handle(command, CancellationToken.None);
@@ -234,7 +234,7 @@ public class CommandHandlersTests
             .Create();
         var handler = new EndorseApplicationCommandHandler(this.aggregateRepository);
         aggregateRepository.GetByIdAsync(application.AggregateId, application.TenantId, CancellationToken.None)
-            .Returns(null as Domain.Model.Domain);
+            .Returns(null as Domain.Model.ApplicationAggregate);
         
         // Act
         var result = await handler.Handle(command, CancellationToken.None);
@@ -287,7 +287,7 @@ public class CommandHandlersTests
             .Create();
         var handler = new OpposeApplicationCommandHandler(this.aggregateRepository);
         aggregateRepository.GetByIdAsync(application.AggregateId, application.TenantId, CancellationToken.None)
-            .Returns(null as Domain.Model.Domain);
+            .Returns(null as Domain.Model.ApplicationAggregate);
         
         // Act
         var result = await handler.Handle(command, CancellationToken.None);
@@ -341,7 +341,7 @@ public class CommandHandlersTests
             .Create();
         var handler = new RegisterApplicationFeePaymentCommandHandler(this.aggregateRepository);
         aggregateRepository.GetByIdAsync(application.AggregateId, application.TenantId, CancellationToken.None)
-            .Returns(null as Domain.Model.Domain);
+            .Returns(null as Domain.Model.ApplicationAggregate);
         
         // Act
         var result = await handler.Handle(command, CancellationToken.None);
@@ -397,7 +397,7 @@ public class CommandHandlersTests
             .Create();
         var handler = new ApproveApplicationCommandHandler(this.aggregateRepository);
         aggregateRepository.GetByIdAsync(application.AggregateId, application.TenantId, CancellationToken.None)
-            .Returns(null as Domain.Model.Domain);
+            .Returns(null as Domain.Model.ApplicationAggregate);
         
         // Act
         var result = await handler.Handle(command, CancellationToken.None);
@@ -457,7 +457,7 @@ public class CommandHandlersTests
             .Returns(TimeSpan.FromDays(14));
         var handler = new RejectApplicationCommandHandler(this.aggregateRepository, this.tenantSettingsService);
         aggregateRepository.GetByIdAsync(application.AggregateId, application.TenantId, CancellationToken.None)
-            .Returns(null as Domain.Model.Domain);
+            .Returns(null as Domain.Model.ApplicationAggregate);
         
         // Act
         var result = await handler.Handle(command, CancellationToken.None);
@@ -529,7 +529,7 @@ public class CommandHandlersTests
         
         var handler = new AppealApplicationRejectionCommandHandler(this.aggregateRepository);
         aggregateRepository.GetByIdAsync(application.AggregateId, application.TenantId, CancellationToken.None)
-            .Returns(null as Domain.Model.Domain);
+            .Returns(null as Domain.Model.ApplicationAggregate);
         
         // Act
         var result = await handler.Handle(command, CancellationToken.None);
@@ -637,7 +637,7 @@ public class CommandHandlersTests
         
         var handler = new ApproveApplicationRejectionAppealCommandHandler(this.aggregateRepository);
         aggregateRepository.GetByIdAsync(application.AggregateId, application.TenantId, CancellationToken.None)
-            .Returns(null as Domain.Model.Domain);
+            .Returns(null as Domain.Model.ApplicationAggregate);
         
         // Act
         var result = await handler.Handle(command, CancellationToken.None);
@@ -709,7 +709,7 @@ public class CommandHandlersTests
         
         var handler = new RejectApplicationRejectionAppealCommandHandler(this.aggregateRepository);
         aggregateRepository.GetByIdAsync(application.AggregateId, application.TenantId, CancellationToken.None)
-            .Returns(null as Domain.Model.Domain);
+            .Returns(null as Domain.Model.ApplicationAggregate);
         
         // Act
         var result = await handler.Handle(command, CancellationToken.None);
@@ -761,7 +761,7 @@ public class CommandHandlersTests
             .Create();
         var handler = new CancelApplicationCommandHandler(this.aggregateRepository);
         aggregateRepository.GetByIdAsync(application.AggregateId, application.TenantId, CancellationToken.None)
-            .Returns(null as Domain.Model.Domain);
+            .Returns(null as Domain.Model.ApplicationAggregate);
         
         // Act
         var result = await handler.Handle(command, CancellationToken.None);
@@ -774,7 +774,7 @@ public class CommandHandlersTests
         await aggregateRepository.Received(0).SaveAsync(application, Arg.Any<CancellationToken>());
     }
     
-    private Domain.Model.Domain CreateValidApplicationForm()
+    private Domain.Model.ApplicationAggregate CreateValidApplicationForm()
     {
         var firstName = this.fixture.Create<string>();
         var lastName = this.fixture.Create<string>();
@@ -791,7 +791,7 @@ public class CommandHandlersTests
         var recommendation = new ApplicationRecommendation(Guid.NewGuid(),
             new CardNumber(this.fixture.Create<string>(), this.fixture.Create<int>()));
         
-        var applicationForm=  new Domain.Model.Domain(firstName,
+        var applicationForm=  new Domain.Model.ApplicationAggregate(firstName,
             lastName,
             address,
             birthDate,

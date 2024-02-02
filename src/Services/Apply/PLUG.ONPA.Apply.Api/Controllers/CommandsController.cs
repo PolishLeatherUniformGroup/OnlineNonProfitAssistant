@@ -191,50 +191,194 @@ namespace PLUG.ONPA.Apply.Api.Controllers
         [HttpPost("application-rejection-appeal")]
         public async Task<IActionResult> AppealApplicationRejection([FromBody] ApplicationRejectionAppealRequest request)
         {
-            return this.Ok();
+            var command = this.mapper.Map<AppealApplicationRejectionCommand>(request);
+            var result = await this.mediator.Send(command);
+            return result.Match<IActionResult>(
+                success=>
+                {
+                    var commandResponse = new CommandProcessedResponse(success);
+                    commandResponse.AddLink(new GetLink($"/api/apply/application/{success}", "Get Application"));
+                    return this.Ok(commandResponse);
+                },
+                error =>
+                {
+                    if (error is DomainException)
+                    {
+                        return this.BadRequest(error.Message);
+                    }
+
+                    return this.StatusCode(500, error.Message);
+                }); 
         }
         
         [HttpPost("application-endorsement")]
         public async Task<IActionResult> EndorseApplication([FromBody] ApplicationEndorsedRequest request)
         {
-            return this.Ok();
+            var command = this.mapper.Map<EndorseApplicationCommand>(request);
+            var result = await this.mediator.Send(command);
+            return result.Match<IActionResult>(
+                success=>
+                {
+                    var commandResponse = new CommandProcessedResponse(success);
+                    commandResponse.AddLink(new GetLink($"/api/apply/application/{success}", "Get Application"));
+                    return this.Ok(commandResponse);
+                },
+                error =>
+                {
+                    if (error is DomainException)
+                    {
+                        return this.BadRequest(error.Message);
+                    }
+
+                    return this.StatusCode(500, error.Message);
+                }); 
         }
         
         [HttpPost("application-oppose")]
         public async Task<IActionResult> OpposeApplication([FromBody] ApplicationOpposedRequest request)
         {
-            return this.Ok();
+            var command = this.mapper.Map<OpposeApplicationCommand>(request);
+            var result = await this.mediator.Send(command);
+            return result.Match<IActionResult>(
+                success=>
+                {
+                    var commandResponse = new CommandProcessedResponse(success);
+                    commandResponse.AddLink(new GetLink($"/api/apply/application/{success}", "Get Application"));
+                    return this.Ok(commandResponse);
+                },
+                error =>
+                {
+                    if (error is DomainException)
+                    {
+                        return this.BadRequest(error.Message);
+                    }
+
+                    return this.StatusCode(500, error.Message);
+                }); 
         }
         
         [HttpPost("application-rejection-appeal-dismissal")]
         public async Task<IActionResult> DismissApplicationRejectionAppeal([FromBody] ApplicationRejectionAppealDismissRequest request)
         {
-            return this.Ok();
+            var command = this.mapper.Map<DismissApplicationRejectionAppealCommand>(request);
+            var result = await this.mediator.Send(command);
+            return result.Match<IActionResult>(
+                success=>
+                {
+                    var commandResponse = new CommandProcessedResponse(success);
+                    commandResponse.AddLink(new GetLink($"/api/apply/application/{success}", "Get Application"));
+                    return this.Ok(commandResponse);
+                },
+                error =>
+                {
+                    if (error is DomainException)
+                    {
+                        return this.BadRequest(error.Message);
+                    }
+
+                    return this.StatusCode(500, error.Message);
+                }); 
         }
         
         
         [HttpPost("application-rejection-appeal-acceptance")]
         public async Task<IActionResult> AcceptApplicationRejectionAppeal([FromBody] ApplicationRejectionAppealAcceptRequest request)
         {
-            return this.Ok();
+            {
+                var command = this.mapper.Map<AcceptApplicationRejectionAppealCommand>(request);
+                var result = await this.mediator.Send(command);
+                return result.Match<IActionResult>(
+                    success=>
+                    {
+                        var commandResponse = new CommandProcessedResponse(success);
+                        commandResponse.AddLink(new GetLink($"/api/apply/application/{success}", "Get Application"));
+                        return this.Ok(commandResponse);
+                    },
+                    error =>
+                    {
+                        if (error is DomainException)
+                        {
+                            return this.BadRequest(error.Message);
+                        }
+
+                        return this.StatusCode(500, error.Message);
+                    }); 
+            }
         }
         
         [HttpPost("application-rejection-appeal-approval")]
         public async Task<IActionResult> ApproveApplicationRejectionAppeal([FromBody] ApplicationRejectionAppealApproveRequest request)
         {
-            return this.Ok();
+            {
+                var command = this.mapper.Map<ApproveApplicationRejectionAppealCommand>(request);
+                var result = await this.mediator.Send(command);
+                return result.Match<IActionResult>(
+                    success=>
+                    {
+                        var commandResponse = new CommandProcessedResponse(success);
+                        commandResponse.AddLink(new GetLink($"/api/apply/application/{success}", "Get Application"));
+                        return this.Ok(commandResponse);
+                    },
+                    error =>
+                    {
+                        if (error is DomainException)
+                        {
+                            return this.BadRequest(error.Message);
+                        }
+
+                        return this.StatusCode(500, error.Message);
+                    }); 
+            }
         }
         
         [HttpPost("application-rejection-appeal-rejection")]
         public async Task<IActionResult> RejectApplicationRejectionAppeal([FromBody] ApplicationRejectionAppealRejectRequest request)
         {
-            return this.Ok();
+            {
+                var command = this.mapper.Map<RejectApplicationRejectionAppealCommand>(request);
+                var result = await this.mediator.Send(command);
+                return result.Match<IActionResult>(
+                    success=>
+                    {
+                        var commandResponse = new CommandProcessedResponse(success);
+                        commandResponse.AddLink(new GetLink($"/api/apply/application/{success}", "Get Application"));
+                        return this.Ok(commandResponse);
+                    },
+                    error =>
+                    {
+                        if (error is DomainException)
+                        {
+                            return this.BadRequest(error.Message);
+                        }
+
+                        return this.StatusCode(500, error.Message);
+                    }); 
+            }
         }
         
         [HttpPost("application-fee-registration")]
         public async Task<IActionResult> RegisterApplicationFee([FromBody] ApplicationFeeRegistrationRequest request)
         {
-            return this.Ok();
+            {
+                var command = this.mapper.Map<RegisterApplicationFeePaymentCommand>(request);
+                var result = await this.mediator.Send(command);
+                return result.Match<IActionResult>(
+                    success=>
+                    {
+                        var commandResponse = new CommandProcessedResponse(success);
+                        commandResponse.AddLink(new GetLink($"/api/apply/application/{success}", "Get Application"));
+                        return this.Ok(commandResponse);
+                    },
+                    error =>
+                    {
+                        if (error is DomainException)
+                        {
+                            return this.BadRequest(error.Message);
+                        }
+
+                        return this.StatusCode(500, error.Message);
+                    }); 
+            }
         }
         
     }

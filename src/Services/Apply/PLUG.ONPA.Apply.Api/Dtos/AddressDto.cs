@@ -9,9 +9,3 @@ public sealed class AddressDto
     public string Street { get;  set; }
     public string? AddressLine2 { get;  set; }
 }
-
-public sealed class MoneyDto
-{
-    public decimal Amount { get;  set; }
-    public string Currency { get;  set; }
-}

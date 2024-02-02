@@ -3,8 +3,8 @@ using MediatR;
 
 namespace PLUG.ONPA.Common.Application;
 
-public abstract class CommandHandlerBase<TCommand> : IRequestHandler<TCommand, Result<bool>>
+public abstract class CommandHandlerBase<TCommand> : IRequestHandler<TCommand, Result<Guid>>
     where TCommand : CommandBase
 {
-    public abstract Task<Result<bool>> Handle(TCommand request, CancellationToken cancellationToken);
+    public abstract Task<Result<Guid>> Handle(TCommand request, CancellationToken cancellationToken);
 }

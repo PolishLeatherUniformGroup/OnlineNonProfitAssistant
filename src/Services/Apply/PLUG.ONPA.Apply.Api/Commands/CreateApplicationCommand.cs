@@ -14,6 +14,6 @@ public sealed record CreateApplicationCommand(
     string AddressStreet,
     string? AddressLine2,
     string? AddressState,
-    DateTime BirthDate,
+    DateOnly BirthDate,
     DateTime ApplicationDate,
     List<string> Recommendations) : CommandBase(TenantId);

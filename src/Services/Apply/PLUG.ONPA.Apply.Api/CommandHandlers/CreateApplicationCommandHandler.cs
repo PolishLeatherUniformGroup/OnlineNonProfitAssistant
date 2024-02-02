@@ -17,18 +17,17 @@ public sealed class CreateApplicationCommandHandler : CommandHandlerBase<CreateA
         this.aggregateRepository = aggregateRepository;
     }
 
-    public override async Task<Result<bool>> Handle(CreateApplicationCommand request, CancellationToken cancellationToken)
+    public override async Task<Result<Guid>> Handle(CreateApplicationCommand request, CancellationToken cancellationToken)
     {
         try
         {
-            var (birthDate, _) = request.BirthDate;
             var aggregate = new Application(
                 request.FirstName,
                 request.LastName,
                 new Address(request.AddressCountry, request.AddressCity, request.AddressPostalCode,
                     request.AddressStreet,
                     request.AddressState, request.AddressLine2),
-                birthDate,
+                request.BirthDate,
                 request.Email,
                 request.Phone,
                 request.Recommendations.Select(x => new ApplicationRecommendation(Guid.NewGuid(), (CardNumber) x))
@@ -37,11 +36,11 @@ public sealed class CreateApplicationCommandHandler : CommandHandlerBase<CreateA
                 request.TenantId
             );
             await this.aggregateRepository.SaveAsync(aggregate, cancellationToken);
-            return true;
+            return aggregate.AggregateId;
         }
         catch (DomainException e)
         {
-            return new Result<bool>(e);
+            return new Result<Guid>(e);
         }
     }
 }

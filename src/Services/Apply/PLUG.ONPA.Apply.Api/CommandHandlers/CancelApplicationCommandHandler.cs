@@ -16,7 +16,7 @@ public sealed class CancelApplicationCommandHandler : CommandHandlerBase<CancelA
         this.aggregateRepository = aggregateRepository;
     }
 
-    public override async Task<Result<bool>> Handle(CancelApplicationCommand request,
+    public override async Task<Result<Guid>> Handle(CancelApplicationCommand request,
         CancellationToken cancellationToken)
     {
         try
@@ -25,18 +25,18 @@ public sealed class CancelApplicationCommandHandler : CommandHandlerBase<CancelA
                 await this.aggregateRepository.GetByIdAsync(request.ApplicationId, request.TenantId, cancellationToken);
             if (aggregate is null)
             {
-                return new Result<bool>(
+                return new Result<Guid>(
                     new AggregateNotFoundException($"ApplicationForm {request.ApplicationId} not found"));
             }
 
             aggregate.CancelApplication(request.CancellationDate);
 
             await this.aggregateRepository.SaveAsync(aggregate, cancellationToken);
-            return true;
+            return aggregate.AggregateId;
         }
         catch (Exception ex)
         {
-            return new Result<bool>(new Exception(ex.Message));
+            return new Result<Guid>(new Exception(ex.Message));
         }
     }
 }

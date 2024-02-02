@@ -16,21 +16,21 @@ public sealed class RequestRecommendationCommandHandler: CommandHandlerBase<Requ
         this.aggregateRepository = aggregateRepository;
     }
 
-    public override async Task<Result<bool>> Handle(RequestRecommendationCommand request, CancellationToken cancellationToken)
+    public override async Task<Result<Guid>> Handle(RequestRecommendationCommand request, CancellationToken cancellationToken)
     {
         try
         {
             var aggregate = await this.aggregateRepository.GetByIdAsync(request.ApplicationId, request.TenantId, cancellationToken);
             if (aggregate is null)
             {
-                return new Result<bool>(new AggregateNotFoundException($"ApplicationForm {request.ApplicationId} not found"));
+                return new Result<Guid>(new AggregateNotFoundException($"ApplicationForm {request.ApplicationId} not found"));
             }
             aggregate.RequestRecommendation(request.RequestDate);
             await this.aggregateRepository.SaveAsync(aggregate, cancellationToken);
-            return true;
+            return aggregate.AggregateId;
         }catch(Exception ex)
         {
-            return new Result<bool>(ex);
+            return new Result<Guid>(ex);
         }
     }
 }

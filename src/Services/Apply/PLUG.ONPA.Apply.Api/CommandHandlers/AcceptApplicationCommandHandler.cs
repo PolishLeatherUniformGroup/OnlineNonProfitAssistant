@@ -17,7 +17,7 @@ public sealed class AcceptApplicationCommandHandler : CommandHandlerBase<AcceptA
         this.aggregateRepository = aggregateRepository;
     }
 
-    public override async Task<Result<bool>> Handle(AcceptApplicationCommand request, CancellationToken cancellationToken)
+    public override async Task<Result<Guid>> Handle(AcceptApplicationCommand request, CancellationToken cancellationToken)
     {
         try
         {
@@ -25,17 +25,17 @@ public sealed class AcceptApplicationCommandHandler : CommandHandlerBase<AcceptA
                 await this.aggregateRepository.GetByIdAsync(request.ApplicationId, request.TenantId, cancellationToken);
             if (aggregate is null)
             {
-                return new Result<bool>(new AggregateNotFoundException($"ApplicationForm {request.ApplicationId} not found"));
+                return new Result<Guid>(new AggregateNotFoundException($"ApplicationForm {request.ApplicationId} not found"));
             }
 
             aggregate.AcceptApplication(new Money(request.RequiredFeeAmount, request.RequiredFeeCurrency));
 
             await this.aggregateRepository.UpdateAsync(aggregate, cancellationToken);
-            return true;
+            return aggregate.AggregateId;
         }
         catch (Exception e)
         {
-            return new Result<bool>(e);
+            return new Result<Guid>(e);
         }
     }
 }

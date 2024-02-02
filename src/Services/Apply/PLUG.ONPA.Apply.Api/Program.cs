@@ -11,6 +11,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddControllers();
+builder.Services.AddProblemDetails();
 
 builder.Services.AddTransient<IAggregateRepository<Application>, ApplicationAggregateRepository>();
 builder.Services.AddTransient<ITenantSettingsService, TenantSettingsService>();
@@ -18,6 +19,8 @@ builder.Services.AddMediatR(configuration =>
 {
     configuration.RegisterServicesFromAssembly(Assembly.GetExecutingAssembly());
 });
+
+builder.Services.AddAutoMapper(Assembly.GetExecutingAssembly());
 
 
 var app = builder.Build();
@@ -31,5 +34,7 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 app.MapControllers();
+app.UseStatusCodePages();
+app.UseExceptionHandler();
 
 app.Run();

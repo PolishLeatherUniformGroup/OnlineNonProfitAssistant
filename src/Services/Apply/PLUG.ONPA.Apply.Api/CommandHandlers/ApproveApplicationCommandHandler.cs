@@ -16,7 +16,7 @@ public sealed class ApproveApplicationCommandHandler : CommandHandlerBase<Approv
         this.aggregateRepository = aggregateRepository;
     }
 
-    public override async Task<Result<bool>> Handle(ApproveApplicationCommand request,
+    public override async Task<Result<Guid>> Handle(ApproveApplicationCommand request,
         CancellationToken cancellationToken)
     {
         try
@@ -25,16 +25,16 @@ public sealed class ApproveApplicationCommandHandler : CommandHandlerBase<Approv
                 await this.aggregateRepository.GetByIdAsync(request.ApplicationId, request.TenantId, cancellationToken);
             if(aggregate is null)
             {
-                return new Result<bool>(new AggregateNotFoundException($"ApplicationForm {request.ApplicationId} not found"));
+                return new Result<Guid>(new AggregateNotFoundException($"ApplicationForm {request.ApplicationId} not found"));
             }
             aggregate.ApproveApplication(request.DecisionDate);
 
             await this.aggregateRepository.SaveAsync(aggregate, cancellationToken);
-            return true;
+            return aggregate.AggregateId;
         }
-        catch (DomainException ex)
+        catch (Exception ex)
         {
-            return new Result<bool>(ex);
+            return new Result<Guid>(ex);
         }
     }
 }

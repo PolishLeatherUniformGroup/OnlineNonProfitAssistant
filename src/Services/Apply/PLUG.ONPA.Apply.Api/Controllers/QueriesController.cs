@@ -2,8 +2,8 @@ using System.Net.Mime;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Formatters;
+using PLUG.ONPA.Apply.Api.Dtos;
 using PLUG.ONPA.Apply.Api.Responses;
-using PLUG.ONPA.Apply.Api.Responses.Dtos;
 
 namespace PLUG.ONPA.Apply.Api.Controllers
 {

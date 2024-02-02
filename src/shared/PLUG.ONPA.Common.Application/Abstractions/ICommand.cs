@@ -3,4 +3,4 @@ using MediatR;
 
 namespace PLUG.ONPA.Common.Application.Abstractions;
 
-public interface ICommand : IRequest<Result<bool>>;
+public interface ICommand : IRequest<Result<Guid>>;

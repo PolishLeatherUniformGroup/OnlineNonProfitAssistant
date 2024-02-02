@@ -20,7 +20,7 @@ public class CardNumber : ValueObject
     
     public static explicit operator CardNumber(string cardNumber)
     {
-        var number = int.Parse(cardNumber.Substring(cardNumber.Length - 4,cardNumber.Length));
+        var number = int.Parse(cardNumber.Substring(cardNumber.Length - 4));
         var prefix = cardNumber.Substring(0, cardNumber.Length - 4);
         return new CardNumber(prefix, number);
     }

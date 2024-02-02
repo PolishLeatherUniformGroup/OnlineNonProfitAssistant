@@ -1,4 +1,4 @@
-namespace PLUG.ONPA.Apply.Api.Responses.Dtos;
+namespace PLUG.ONPA.Apply.Api.Dtos;
 
 public sealed class ApplicationStatusDto
 {

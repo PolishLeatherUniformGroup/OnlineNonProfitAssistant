@@ -17,7 +17,7 @@ public sealed class DismissApplicationCommandHandler : CommandHandlerBase<Dismis
         this.aggregateRepository = aggregateRepository;
     }
 
-    public override async Task<Result<bool>> Handle(DismissApplicationCommand request, CancellationToken cancellationToken)
+    public override async Task<Result<Guid>> Handle(DismissApplicationCommand request, CancellationToken cancellationToken)
     {
         try
         {
@@ -25,14 +25,14 @@ public sealed class DismissApplicationCommandHandler : CommandHandlerBase<Dismis
                 await this.aggregateRepository.GetByIdAsync(request.ApplicationId, request.TenantId, cancellationToken);
             if (aggregate == null)
             {
-                return new Result<bool>(new AggregateNotFoundException($"ApplicationForm { request.ApplicationId} not found"));
+                return new Result<Guid>(new AggregateNotFoundException($"ApplicationForm { request.ApplicationId} not found"));
             }
             aggregate.DismissApplication(request.ValidRecommendations.Select(x=>(CardNumber)x).ToList());
             await this.aggregateRepository.SaveAsync(aggregate, cancellationToken);
-            return true;
+            return aggregate.AggregateId;
         }catch (Exception e)
         {
-            return new Result<bool>(e);
+            return new Result<Guid>(e);
         }
     }
 }

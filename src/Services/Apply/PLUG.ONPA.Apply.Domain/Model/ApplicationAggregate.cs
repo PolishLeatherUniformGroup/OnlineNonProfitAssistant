@@ -1,6 +1,7 @@
 using PLUG.ONPA.Apply.Domain.ChangeEvents;
 using PLUG.ONPA.Apply.Domain.DomainEvents;
 using PLUG.ONPA.Common.Domain;
+using PLUG.ONPA.Common.Domain.Abstractions;
 using PLUG.ONPA.Common.Domain.Exceptions;
 using PLUG.ONPA.Common.Models;
 
@@ -33,6 +34,12 @@ public partial class ApplicationAggregate : AggregateRoot
     private readonly List<ApplicationRecommendation> recommendations = new ();
     public IReadOnlyList<ApplicationRecommendation> Recommendations => this.recommendations;
 
+    
+    public ApplicationAggregate(Guid aggregateId,IEnumerable<IChangeEvent> events, Guid? tenantId = null)
+        : base(aggregateId,events,tenantId)
+    {
+    }
+    
     public ApplicationAggregate(NonEmptyString firstName, NonEmptyString lastName, Address address, DateOnly birthDate,
         NonEmptyString email, NonEmptyString phoneNumber, List<ApplicationRecommendation> recommendations,
         DateTime applicationDate,
@@ -245,6 +252,7 @@ public partial class ApplicationAggregate : AggregateRoot
         {
             this.FinalDecisionDate = this.AppealDeadline.Value;
             this.Status = ApplicationStatus.AppealDismissed;
+            this.AppealDate = this.AppealDate;
 
             var domainEvent =
                 new ApplicationRejectionAppealDismissedDomainEvent(this.Email, this.AppealDeadline.Value, appealDate);

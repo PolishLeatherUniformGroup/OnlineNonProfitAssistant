@@ -33,12 +33,12 @@ public class NonEmptyString :ValueObject
     
     public static bool operator ==(NonEmptyString left, NonEmptyString right)
     {
-        return Equals(left, right);
+        return left.Value== right.Value;
     }
     
     public static bool operator !=(NonEmptyString left, NonEmptyString right)
     {
-        return !Equals(left, right);
+        return !(left==right);
     }
     protected override IEnumerable<object> GetEqualityComponents()
     {

@@ -92,7 +92,15 @@ public partial class ApplicationAggregate
     public void ApplyChange(ApplicationRejectionAppealDismissedChangeEvent @event)
     {
         this.Status = @event.Status;
+        this.AppealDate = @event.AppealDate;
         this.FinalDecisionDate = @event.AppealDate;
+    }
+    public void ApplyChange(ApplicationRejectionAppealReceivedChangeEvent @event)
+    {
+        this.Status = @event.Status;
+        this.AppealDate = @event.AppealDate;
+        this.AppealReason = @event.AppealReason;
+        
     }
     
     public void ApplyChange(ApplicationRejectionAppealApprovedChangeEvent @event)

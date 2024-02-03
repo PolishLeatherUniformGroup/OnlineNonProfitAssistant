@@ -295,6 +295,64 @@ public class ApplicationAggregateTests
     }
     
     [Fact]
+    public void ApproveApplication_should_fail_whenNotPaid()
+    {
+        // Arrange
+        var sut = this.CreateValidApplicationForm();
+        var requiredFee = this.fixture.Create<decimal>();
+        sut.AcceptApplication(Money.FromPln(requiredFee));
+        sut.RequestRecommendation(this.fixture.Create<DateTime>());
+        sut.EndorseApplication(sut.Recommendations.First().Id);
+        var approveDate = this.fixture.Create<DateTime>();
+       
+        // Act
+        var action = ()=>sut.ApproveApplication(approveDate);
+        
+        // Assert
+       action.Should().Throw<DomainException>();
+       
+    }
+    
+    [Fact]
+    public void ApproveApplication_should_fail_whenNotPaidFully()
+    {
+        // Arrange
+        var sut = this.CreateValidApplicationForm();
+        var requiredFee = this.fixture.Create<decimal>();
+        sut.AcceptApplication(Money.FromPln(requiredFee));
+        sut.RequestRecommendation(this.fixture.Create<DateTime>());
+        sut.EndorseApplication(sut.Recommendations.First().Id);
+        var approveDate = this.fixture.Create<DateTime>();
+        sut.RegisterMembershipFeePayment(sut.RequiredMembershipFee /2,approveDate);
+       
+        // Act
+        var action = ()=>sut.ApproveApplication(approveDate);
+        
+        // Assert
+     action.Should().Throw<DomainException>();
+     
+    }
+    
+    [Fact]
+    public void ApproveApplication_should_fail_whenNotAwaitsDecision()
+    {
+        // Arrange
+        var sut = this.CreateValidApplicationForm();
+        var requiredFee = this.fixture.Create<decimal>();
+        sut.AcceptApplication(Money.FromPln(requiredFee));
+        sut.RequestRecommendation(this.fixture.Create<DateTime>());
+        var approveDate = this.fixture.Create<DateTime>();
+        sut.RegisterMembershipFeePayment(sut.RequiredMembershipFee /2,approveDate);
+       
+        // Act
+        var action = ()=>sut.ApproveApplication(approveDate);
+        
+        // Assert
+        action.Should().Throw<DomainException>();
+     
+    }
+    
+    [Fact]
     public void RejectApplication_should_emmit_ApplicationRejectedChangeEvent()
     {
         // Arrange
@@ -376,6 +434,27 @@ public class ApplicationAggregateTests
     }
     
     [Fact]
+    public void AppealApplicationRejection_should_fail_whenNotRejected()
+    {
+        // Arrange
+        var sut = this.CreateValidApplicationForm();
+        var requiredFee = this.fixture.Create<decimal>();
+        sut.AcceptApplication(Money.FromPln(requiredFee));
+        sut.RequestRecommendation(this.fixture.Create<DateTime>());
+        sut.EndorseApplication(sut.Recommendations.First().Id);
+        var rejectionDate = this.fixture.Create<DateTime>();
+        sut.RegisterMembershipFeePayment(sut.RequiredMembershipFee,rejectionDate);
+        var reason = this.fixture.Create<string>();
+        var deadline = this.fixture.Create<DateTime>();
+        
+        // Act
+        var action = ()=>sut.AppealRejection(deadline.AddDays(2),this.fixture.Create<string>());
+        
+        // Assert
+        action.Should().Throw<DomainException>();
+     }
+    
+    [Fact]
     public void AppealApplicationRejection_should_emmit_ApplicationRejectionAppealReceivedChangeEvent_whenAppealedBeforeDeadline()
     {
         // Arrange
@@ -442,6 +521,28 @@ public class ApplicationAggregateTests
     }
     
     [Fact]
+    public void ApproveAppeal_should_when_notAppealed()
+    {
+        // Arrange
+        var sut = this.CreateValidApplicationForm();
+        var requiredFee = this.fixture.Create<decimal>();
+        sut.AcceptApplication(Money.FromPln(requiredFee));
+        sut.RequestRecommendation(this.fixture.Create<DateTime>());
+        sut.EndorseApplication(sut.Recommendations.First().Id);
+        var rejectionDate = this.fixture.Create<DateTime>();
+        sut.RegisterMembershipFeePayment(sut.RequiredMembershipFee,rejectionDate);
+        var reason = this.fixture.Create<string>();
+        var deadline = this.fixture.Create<DateTime>();
+        sut.RejectApplication(rejectionDate,reason,deadline);
+        var decisionDate = this.fixture.Create<DateTime>();
+        // Act
+        var action = ()=>sut.ApproveAppeal(decisionDate,reason);
+        
+        // Assert
+        action.Should().Throw<DomainException>();
+    }
+    
+    [Fact]
     public void RejectAppeal_should_emmit_ApplicationRejectionAppealRejectedChangeEvent()
     {
         // Arrange
@@ -477,6 +578,29 @@ public class ApplicationAggregateTests
     }
     
     [Fact]
+    public void RejectAppeal_should_fail_when_notAppealed()
+    {
+        // Arrange
+        var sut = this.CreateValidApplicationForm();
+        var requiredFee = this.fixture.Create<decimal>();
+        sut.AcceptApplication(Money.FromPln(requiredFee));
+        sut.RequestRecommendation(this.fixture.Create<DateTime>());
+        sut.EndorseApplication(sut.Recommendations.First().Id);
+        var rejectionDate = this.fixture.Create<DateTime>();
+        sut.RegisterMembershipFeePayment(sut.RequiredMembershipFee,rejectionDate);
+        var reason = this.fixture.Create<string>();
+        var deadline = this.fixture.Create<DateTime>();
+        sut.RejectApplication(rejectionDate,reason,deadline);
+       
+        var decisionDate = this.fixture.Create<DateTime>();
+        // Act
+        var action=()=>sut.RejectAppeal(decisionDate,reason);
+        
+        // Assert
+        action.Should().Throw<DomainException>();
+    }
+    
+    [Fact]
     public void CancelApplication_should_emmit_ApplicationCancelledChangeEvent()
     {
         // Arrange
@@ -494,6 +618,91 @@ public class ApplicationAggregateTests
         sut.GetChangeEvents().Should().ContainItemsAssignableTo<ApplicationCancelledChangeEvent>();
         sut.GetDomainEvents().Should().HaveCount(1);
         sut.GetDomainEvents().Should().ContainItemsAssignableTo<ApplicationCancelledDomainEvent>();
+    }
+    
+    [Fact]
+    public void CancelApplication_should_fail_whenAlreadyCancelled()
+    {
+        // Arrange
+        var sut = this.CreateValidApplicationForm();
+        var cancellationDate = this.fixture.Create<DateTime>();
+        sut.CancelApplication(cancellationDate);
+        
+        // Act
+        var action = ()=>sut.CancelApplication(cancellationDate);
+        
+        // Assert
+        action.Should().Throw<DomainException>();
+    }
+    
+    [Fact]
+    public void CancelApplication_should_when_ApplicationAppealRejcted(){
+        
+        // Arrange
+        var sut = this.CreateValidApplicationForm();
+        var requiredFee = this.fixture.Create<decimal>();
+        sut.AcceptApplication(Money.FromPln(requiredFee));
+        sut.RequestRecommendation(this.fixture.Create<DateTime>());
+        sut.EndorseApplication(sut.Recommendations.First().Id);
+        var rejectionDate = this.fixture.Create<DateTime>();
+        sut.RegisterMembershipFeePayment(sut.RequiredMembershipFee,rejectionDate);
+        var reason = this.fixture.Create<string>();
+        var deadline = this.fixture.Create<DateTime>();
+        sut.RejectApplication(rejectionDate,reason,deadline);
+        sut.AppealRejection(deadline.AddDays(-2),reason);
+        var decisionDate = this.fixture.Create<DateTime>();
+        sut.RejectAppeal(decisionDate,reason);
+        
+        // Act
+        var action = ()=>sut.CancelApplication(decisionDate);
+        
+        // Assert
+        action.Should().Throw<DomainException>();
+    }
+    
+    [Fact]
+    public void CancelApplication_should_when_ApplicationAppealApproved(){
+        
+        // Arrange
+        var sut = this.CreateValidApplicationForm();
+        var requiredFee = this.fixture.Create<decimal>();
+        sut.AcceptApplication(Money.FromPln(requiredFee));
+        sut.RequestRecommendation(this.fixture.Create<DateTime>());
+        sut.EndorseApplication(sut.Recommendations.First().Id);
+        var rejectionDate = this.fixture.Create<DateTime>();
+        sut.RegisterMembershipFeePayment(sut.RequiredMembershipFee,rejectionDate);
+        var reason = this.fixture.Create<string>();
+        var deadline = this.fixture.Create<DateTime>();
+        sut.RejectApplication(rejectionDate,reason,deadline);
+        sut.AppealRejection(deadline.AddDays(-2),reason);
+        var decisionDate = this.fixture.Create<DateTime>();
+        sut.ApproveAppeal(decisionDate,reason);
+        
+        // Act
+        var action = ()=>sut.CancelApplication(decisionDate);
+        
+        // Assert
+        action.Should().Throw<DomainException>();
+    }
+    [Fact]
+    public void CancelApplication_should_when_ApplicationApproved(){
+        
+        // Arrange
+        var sut = this.CreateValidApplicationForm();
+        var requiredFee = this.fixture.Create<decimal>();
+        sut.AcceptApplication(Money.FromPln(requiredFee));
+        sut.RequestRecommendation(this.fixture.Create<DateTime>());
+        sut.EndorseApplication(sut.Recommendations.First().Id);
+        var rejectionDate = this.fixture.Create<DateTime>();
+        sut.RegisterMembershipFeePayment(sut.RequiredMembershipFee,rejectionDate);
+        var decisionDate = this.fixture.Create<DateTime>();
+        sut.ApproveApplication(decisionDate);
+        
+        // Act
+        var action = ()=>sut.CancelApplication(decisionDate);
+        
+        // Assert
+        action.Should().Throw<DomainException>();
     }
     
     private Domain.Model.ApplicationAggregate CreateValidApplicationForm()

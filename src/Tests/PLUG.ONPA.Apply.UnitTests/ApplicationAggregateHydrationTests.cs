@@ -13,7 +13,7 @@ public class ApplicationAggregateHydrationTests
     
     public ApplicationAggregateHydrationTests()
     {
-        fixture = new Fixture().Customize(new CompositeCustomization(
+        this.fixture = new Fixture().Customize(new CompositeCustomization(
             new DateOnlyFixtureCustomization()));
     }
 
@@ -21,9 +21,9 @@ public class ApplicationAggregateHydrationTests
     public void ApplicationAggregate_Should_ApplyApplicationCreatedChangeEvent()
     {
         // Arrange
-        var aggregateId = fixture.Create<Guid>();
+        var aggregateId = this.fixture.Create<Guid>();
         var application = new ApplicationAggregate(aggregateId, Enumerable.Empty<IChangeEvent>(), null);
-        var applicationCreatedEvent = fixture.Create<ApplicationCreatedChangeEvent>();
+        var applicationCreatedEvent = this.fixture.Create<ApplicationCreatedChangeEvent>();
         
         // Act
         application.ApplyChange(applicationCreatedEvent);
@@ -45,12 +45,12 @@ public class ApplicationAggregateHydrationTests
     public void ApplicationAggregate_Should_ApplyApplicationAcceptedChangeEvent()
     {
         // Arrange
-        var aggregateId = fixture.Create<Guid>();
+        var aggregateId = this.fixture.Create<Guid>();
         var application = new ApplicationAggregate(aggregateId, Enumerable.Empty<IChangeEvent>(), null);
-        var applicationCreatedEvent = fixture.Create<ApplicationCreatedChangeEvent>();
+        var applicationCreatedEvent = this.fixture.Create<ApplicationCreatedChangeEvent>();
         application.ApplyChange(applicationCreatedEvent);
         
-        var applicationAcceptedEvent = fixture.Create<ApplicationAcceptedChangeEvent>();
+        var applicationAcceptedEvent = this.fixture.Create<ApplicationAcceptedChangeEvent>();
         // Act
         application.ApplyChange(applicationAcceptedEvent);
         
@@ -63,12 +63,12 @@ public class ApplicationAggregateHydrationTests
     public void ApplicationAggregate_Should_ApplyApplicationDismissedChangeEvent()
     {
         // Arrange
-        var aggregateId = fixture.Create<Guid>();
+        var aggregateId = this.fixture.Create<Guid>();
         var application = new ApplicationAggregate(aggregateId, Enumerable.Empty<IChangeEvent>(), null);
-        var applicationCreatedEvent = fixture.Create<ApplicationCreatedChangeEvent>();
+        var applicationCreatedEvent = this.fixture.Create<ApplicationCreatedChangeEvent>();
         application.ApplyChange(applicationCreatedEvent);
         
-        var applicationAcceptedEvent = fixture.Create<ApplicationDismissedChangeEvent>();
+        var applicationAcceptedEvent = this.fixture.Create<ApplicationDismissedChangeEvent>();
         // Act
         application.ApplyChange(applicationAcceptedEvent);
         
@@ -80,12 +80,12 @@ public class ApplicationAggregateHydrationTests
     public void ApplicationAggregate_Should_ApplyApplicationCancelledChangeEvent()
     {
         // Arrange
-        var aggregateId = fixture.Create<Guid>();
+        var aggregateId = this.fixture.Create<Guid>();
         var application = new ApplicationAggregate(aggregateId, Enumerable.Empty<IChangeEvent>(), null);
-        var applicationCreatedEvent = fixture.Create<ApplicationCreatedChangeEvent>();
+        var applicationCreatedEvent = this.fixture.Create<ApplicationCreatedChangeEvent>();
         application.ApplyChange(applicationCreatedEvent);
         
-        var applicationAcceptedEvent = fixture.Create<ApplicationCancelledChangeEvent>();
+        var applicationAcceptedEvent = this.fixture.Create<ApplicationCancelledChangeEvent>();
         // Act
         application.ApplyChange(applicationAcceptedEvent);
         
@@ -97,14 +97,14 @@ public class ApplicationAggregateHydrationTests
     public void ApplicationAggregate_Should_ApplyApplicationRecomendationRequestedChangeEvent()
     {
         // Arrange
-        var aggregateId = fixture.Create<Guid>();
+        var aggregateId = this.fixture.Create<Guid>();
         var application = new ApplicationAggregate(aggregateId, Enumerable.Empty<IChangeEvent>(), null);
-        var applicationCreatedEvent = fixture.Create<ApplicationCreatedChangeEvent>();
+        var applicationCreatedEvent = this.fixture.Create<ApplicationCreatedChangeEvent>();
         application.ApplyChange(applicationCreatedEvent);
-        var applicationAcceptedEvent = fixture.Create<ApplicationAcceptedChangeEvent>();
+        var applicationAcceptedEvent = this.fixture.Create<ApplicationAcceptedChangeEvent>();
         application.ApplyChange(applicationAcceptedEvent);
         
-        var requestRecommendationEvent = fixture.Create<ApplicationRecommendationRequestedChangeEvent>();
+        var requestRecommendationEvent = this.fixture.Create<ApplicationRecommendationRequestedChangeEvent>();
         
         // Act
         application.ApplyChange(requestRecommendationEvent);
@@ -117,13 +117,13 @@ public class ApplicationAggregateHydrationTests
     public void ApplicationAggregate_Should_ApplyApplicationEndorsedChangeEvent()
     {
         // Arrange
-        var aggregateId = fixture.Create<Guid>();
+        var aggregateId = this.fixture.Create<Guid>();
         var application = new ApplicationAggregate(aggregateId, Enumerable.Empty<IChangeEvent>(), null);
-        var applicationCreatedEvent = fixture.Create<ApplicationCreatedChangeEvent>();
+        var applicationCreatedEvent = this.fixture.Create<ApplicationCreatedChangeEvent>();
         application.ApplyChange(applicationCreatedEvent);
-        var applicationAcceptedEvent = fixture.Create<ApplicationAcceptedChangeEvent>();
+        var applicationAcceptedEvent = this.fixture.Create<ApplicationAcceptedChangeEvent>();
         application.ApplyChange(applicationAcceptedEvent);
-        var requestRecommendationEvent = fixture.Create<ApplicationRecommendationRequestedChangeEvent>();
+        var requestRecommendationEvent = this.fixture.Create<ApplicationRecommendationRequestedChangeEvent>();
         application.ApplyChange(requestRecommendationEvent);
         var applicationEndorsedEvent = new ApplicationEndorsedChangeEvent(application.Recommendations.First().Id);
         
@@ -138,13 +138,13 @@ public class ApplicationAggregateHydrationTests
     public void ApplicationAggregate_Should_ApplyApplicationOpposedChangeEvent()
     {
         // Arrange
-        var aggregateId = fixture.Create<Guid>();
+        var aggregateId = this.fixture.Create<Guid>();
         var application = new ApplicationAggregate(aggregateId, Enumerable.Empty<IChangeEvent>(), null);
-        var applicationCreatedEvent = fixture.Create<ApplicationCreatedChangeEvent>();
+        var applicationCreatedEvent = this.fixture.Create<ApplicationCreatedChangeEvent>();
         application.ApplyChange(applicationCreatedEvent);
-        var applicationAcceptedEvent = fixture.Create<ApplicationAcceptedChangeEvent>();
+        var applicationAcceptedEvent = this.fixture.Create<ApplicationAcceptedChangeEvent>();
         application.ApplyChange(applicationAcceptedEvent);
-        var requestRecommendationEvent = fixture.Create<ApplicationRecommendationRequestedChangeEvent>();
+        var requestRecommendationEvent = this.fixture.Create<ApplicationRecommendationRequestedChangeEvent>();
         application.ApplyChange(requestRecommendationEvent);
         var applicationEndorsedEvent = new ApplicationOpposedChangeEvent(ApplicationStatus.Rejected, application.Recommendations.First().Id);
         
@@ -159,13 +159,13 @@ public class ApplicationAggregateHydrationTests
     public void ApplicationAggregate_Should_ApplyApplicationApprovedChangeEvent()
     {
         // Arrange
-        var aggregateId = fixture.Create<Guid>();
+        var aggregateId = this.fixture.Create<Guid>();
         var application = new ApplicationAggregate(aggregateId, Enumerable.Empty<IChangeEvent>(), null);
-        var applicationCreatedEvent = fixture.Create<ApplicationCreatedChangeEvent>();
+        var applicationCreatedEvent = this.fixture.Create<ApplicationCreatedChangeEvent>();
         application.ApplyChange(applicationCreatedEvent);
-        var applicationAcceptedEvent = fixture.Create<ApplicationAcceptedChangeEvent>();
+        var applicationAcceptedEvent = this.fixture.Create<ApplicationAcceptedChangeEvent>();
         application.ApplyChange(applicationAcceptedEvent);
-        var requestRecommendationEvent = fixture.Create<ApplicationRecommendationRequestedChangeEvent>();
+        var requestRecommendationEvent = this.fixture.Create<ApplicationRecommendationRequestedChangeEvent>();
         application.ApplyChange(requestRecommendationEvent);
         var applicationApproved = this.fixture.Create<ApplicationApprovedChangeEvent>();
         // Act
@@ -180,13 +180,13 @@ public class ApplicationAggregateHydrationTests
     public void ApplicationAggregate_Should_ApplyApplicationRejectedChangeEvent()
     {
         // Arrange
-        var aggregateId = fixture.Create<Guid>();
+        var aggregateId = this.fixture.Create<Guid>();
         var application = new ApplicationAggregate(aggregateId, Enumerable.Empty<IChangeEvent>(), null);
-        var applicationCreatedEvent = fixture.Create<ApplicationCreatedChangeEvent>();
+        var applicationCreatedEvent = this.fixture.Create<ApplicationCreatedChangeEvent>();
         application.ApplyChange(applicationCreatedEvent);
-        var applicationAcceptedEvent = fixture.Create<ApplicationAcceptedChangeEvent>();
+        var applicationAcceptedEvent = this.fixture.Create<ApplicationAcceptedChangeEvent>();
         application.ApplyChange(applicationAcceptedEvent);
-        var requestRecommendationEvent = fixture.Create<ApplicationRecommendationRequestedChangeEvent>();
+        var requestRecommendationEvent = this.fixture.Create<ApplicationRecommendationRequestedChangeEvent>();
         application.ApplyChange(requestRecommendationEvent);
         var applicationApproved = this.fixture.Create<ApplicationRejectedChangeEvent>();
         // Act
@@ -203,13 +203,13 @@ public class ApplicationAggregateHydrationTests
     public void ApplicationAggregate_Should_ApplyApplicationRejectionAppealedChangeEvent()
     {
         // Arrange
-        var aggregateId = fixture.Create<Guid>();
+        var aggregateId = this.fixture.Create<Guid>();
         var application = new ApplicationAggregate(aggregateId, Enumerable.Empty<IChangeEvent>(), null);
-        var applicationCreatedEvent = fixture.Create<ApplicationCreatedChangeEvent>();
+        var applicationCreatedEvent = this.fixture.Create<ApplicationCreatedChangeEvent>();
         application.ApplyChange(applicationCreatedEvent);
-        var applicationAcceptedEvent = fixture.Create<ApplicationAcceptedChangeEvent>();
+        var applicationAcceptedEvent = this.fixture.Create<ApplicationAcceptedChangeEvent>();
         application.ApplyChange(applicationAcceptedEvent);
-        var requestRecommendationEvent = fixture.Create<ApplicationRecommendationRequestedChangeEvent>();
+        var requestRecommendationEvent = this.fixture.Create<ApplicationRecommendationRequestedChangeEvent>();
         application.ApplyChange(requestRecommendationEvent);
         var applicationApproved = this.fixture.Create<ApplicationRejectionAppealReceivedChangeEvent>();
         // Act
@@ -225,13 +225,13 @@ public class ApplicationAggregateHydrationTests
     public void ApplicationAggregate_Should_ApplyApplicationRejectionAppealDismissedChangeEvent()
     {
         // Arrange
-        var aggregateId = fixture.Create<Guid>();
+        var aggregateId = this.fixture.Create<Guid>();
         var application = new ApplicationAggregate(aggregateId, Enumerable.Empty<IChangeEvent>(), null);
-        var applicationCreatedEvent = fixture.Create<ApplicationCreatedChangeEvent>();
+        var applicationCreatedEvent = this.fixture.Create<ApplicationCreatedChangeEvent>();
         application.ApplyChange(applicationCreatedEvent);
-        var applicationAcceptedEvent = fixture.Create<ApplicationAcceptedChangeEvent>();
+        var applicationAcceptedEvent = this.fixture.Create<ApplicationAcceptedChangeEvent>();
         application.ApplyChange(applicationAcceptedEvent);
-        var requestRecommendationEvent = fixture.Create<ApplicationRecommendationRequestedChangeEvent>();
+        var requestRecommendationEvent = this.fixture.Create<ApplicationRecommendationRequestedChangeEvent>();
         application.ApplyChange(requestRecommendationEvent);
         var applicationApproved = this.fixture.Create<ApplicationRejectionAppealDismissedChangeEvent>();
         // Act

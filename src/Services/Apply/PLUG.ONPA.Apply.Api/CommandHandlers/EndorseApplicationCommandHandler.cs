@@ -9,9 +9,9 @@ namespace PLUG.ONPA.Apply.Api.CommandHandlers;
 
 public sealed class EndorseApplicationCommandHandler : CommandHandlerBase<EndorseApplicationCommand>
 {
-    private readonly IAggregateRepository<Domain.Model.ApplicationAggregate> aggregateRepository;
+    private readonly IAggregateRepository<ApplicationAggregate> aggregateRepository;
 
-    public EndorseApplicationCommandHandler(IAggregateRepository<Domain.Model.ApplicationAggregate> aggregateRepository)
+    public EndorseApplicationCommandHandler(IAggregateRepository<ApplicationAggregate> aggregateRepository)
     {
         this.aggregateRepository = aggregateRepository;
     }

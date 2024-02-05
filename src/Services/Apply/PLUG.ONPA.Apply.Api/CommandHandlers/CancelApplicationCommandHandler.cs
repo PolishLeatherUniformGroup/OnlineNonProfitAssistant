@@ -9,9 +9,9 @@ namespace PLUG.ONPA.Apply.Api.CommandHandlers;
 
 public sealed class CancelApplicationCommandHandler : CommandHandlerBase<CancelApplicationCommand>
 {
-    private readonly IAggregateRepository<Domain.Model.ApplicationAggregate> aggregateRepository;
+    private readonly IAggregateRepository<ApplicationAggregate> aggregateRepository;
 
-    public CancelApplicationCommandHandler(IAggregateRepository<Domain.Model.ApplicationAggregate> aggregateRepository)
+    public CancelApplicationCommandHandler(IAggregateRepository<ApplicationAggregate> aggregateRepository)
     {
         this.aggregateRepository = aggregateRepository;
     }

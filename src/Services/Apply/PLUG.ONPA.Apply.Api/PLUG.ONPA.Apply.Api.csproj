@@ -19,11 +19,9 @@
 
     <ItemGroup>
       <ProjectReference Include="..\..\..\shared\PLUG.ONPA.Common.Application\PLUG.ONPA.Common.Application.csproj" />
+      <ProjectReference Include="..\..\..\shared\PLUG.ONPA.Shared.ExternalCommunication\PLUG.ONPA.Shared.ExternalCommunication.csproj" />
       <ProjectReference Include="..\PLUG.ONPA.Apply.Domain\PLUG.ONPA.Apply.Domain.csproj" />
-    </ItemGroup>
-
-    <ItemGroup>
-      <Folder Include="DomainEventHandlers\" />
+      <ProjectReference Include="..\PLUG.ONPA.Apply.Read\PLUG.ONPA.Apply.Read.csproj" />
     </ItemGroup>
 
 </Project>

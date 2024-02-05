@@ -37,7 +37,7 @@ public class ApplicationAggregateTests
             new CardNumber(this.fixture.Create<string>(), this.fixture.Create<int>()));
         
         // Act
-        var sut = new Domain.Model.ApplicationAggregate(firstName,
+        var sut = new ApplicationAggregate(firstName,
             lastName,
             address,
             birthDate,
@@ -705,7 +705,7 @@ public class ApplicationAggregateTests
         action.Should().Throw<DomainException>();
     }
     
-    private Domain.Model.ApplicationAggregate CreateValidApplicationForm()
+    private ApplicationAggregate CreateValidApplicationForm()
     {
         var firstName = this.fixture.Create<string>();
         var lastName = this.fixture.Create<string>();
@@ -722,7 +722,7 @@ public class ApplicationAggregateTests
         var recommendation = new ApplicationRecommendation(Guid.NewGuid(),
             new CardNumber(this.fixture.Create<string>(), this.fixture.Create<int>()));
         
-        var applicationForm=  new Domain.Model.ApplicationAggregate(firstName,
+        var applicationForm=  new ApplicationAggregate(firstName,
             lastName,
             address,
             birthDate,
@@ -737,7 +737,7 @@ public class ApplicationAggregateTests
         applicationForm.ClearDomainEvents();
         return applicationForm;
     }
-    private Domain.Model.ApplicationAggregate CreateValidApplicationWithMultipleRecommendations()
+    private ApplicationAggregate CreateValidApplicationWithMultipleRecommendations()
     {
         var firstName = this.fixture.Create<string>();
         var lastName = this.fixture.Create<string>();
@@ -756,7 +756,7 @@ public class ApplicationAggregateTests
          var recommendationB = new ApplicationRecommendation(Guid.NewGuid(),
             new CardNumber(this.fixture.Create<string>(), this.fixture.Create<int>()));
         
-        var applicationForm=  new Domain.Model.ApplicationAggregate(firstName,
+        var applicationForm=  new ApplicationAggregate(firstName,
             lastName,
             address,
             birthDate,

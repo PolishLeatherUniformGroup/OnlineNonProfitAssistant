@@ -3,25 +3,25 @@ using PLUG.ONPA.Common.Domain.Abstractions;
 
 namespace PLUG.ONPA.Apply.Api.Repositories;
 
-public sealed class ApplicationAggregateRepository : IAggregateRepository<Domain.Model.ApplicationAggregate>
+public sealed class ApplicationAggregateRepository : IAggregateRepository<ApplicationAggregate>
 {
-    public Task<Domain.Model.ApplicationAggregate?> GetByIdAsync(Guid aggregateId, Guid? tenantId = null, CancellationToken cancellationToken = default)
+    public Task<ApplicationAggregate?> GetByIdAsync(Guid aggregateId, Guid? tenantId = null, CancellationToken cancellationToken = default)
     {
         throw new NotImplementedException();
     }
 
-    public Task<Domain.Model.ApplicationAggregate?> GetByIdForVersionAsync(Guid aggregateId, long version, Guid? tenantId = null,
+    public Task<ApplicationAggregate?> GetByIdForVersionAsync(Guid aggregateId, long version, Guid? tenantId = null,
         CancellationToken cancellationToken = default)
     {
         throw new NotImplementedException();
     }
 
-    public Task SaveAsync(Domain.Model.ApplicationAggregate aggregateRoot, CancellationToken cancellationToken = default)
+    public Task SaveAsync(ApplicationAggregate aggregateRoot, CancellationToken cancellationToken = default)
     {
         throw new NotImplementedException();
     }
 
-    public Task UpdateAsync(Domain.Model.ApplicationAggregate aggregateRoot, CancellationToken cancellationToken = default)
+    public Task UpdateAsync(ApplicationAggregate aggregateRoot, CancellationToken cancellationToken = default)
     {
         throw new NotImplementedException();
     }
